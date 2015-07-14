@@ -179,6 +179,7 @@ if ($sw !== 1){
 		sde.no_poliza,
 		sde.prefijo,
 		sde.pre_impreso,
+		sde.no_preprinted,
 		sde.cobertura,
 		sde.id_poliza,
 		scl.id_cliente,
@@ -311,7 +312,7 @@ $no_emision = '';
 $cr_prima = 0;
 $cr_payment = 0;
 $bill_name = $taken_name = $bill_nit = $taken_nit = $taken_code = '';
-$no_poliza = '';
+$no_preprinted = '';
 $idNE = '';
 
 $FC = false;
@@ -333,7 +334,7 @@ while($row = $rs->fetch_array(MYSQLI_ASSOC)){
 
 		if ((boolean)$row['pre_impreso'] === true) {
 			$pp_check = 'checked';
-			$no_poliza = $idNE;
+			$no_poliza = $row['no_preprinted'];
 		}
 
 		$bill_name = $row['factura_nombre'];
@@ -1006,7 +1007,7 @@ foreach ($beneficiaryData as $key => $value) {
 		<label style="width: auto; font-size: 110%; 
 			margin-left: 40px;">
             <input class="check" type="checkbox" id="di-print" name="di-print" 
-            	value="1" <?=$pp_check . ' ' . $read_new;?>>
+            	value="1" <?=$pp_check . ' ' . $read_save;?>>
 			&nbsp;&nbsp;Certificado Pre-Impreso
 		</label>
 	</div><!--

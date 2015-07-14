@@ -177,6 +177,7 @@ if($sw !== 1){
 	    sde.no_poliza,
 	    sde.prefijo,
 	    sde.pre_impreso,
+	    sde.no_preprinted,
 	    sde.cobertura,
 	    sde.id_poliza,
 	    scl.tipo,
@@ -308,7 +309,7 @@ $no_emision = '';
 $cr_prima = 0;
 $cr_payment = '';
 $bill_name = $taken_name = $bill_nit = $taken_nit = $taken_code = '';
-$no_poliza = '';
+$no_preprinted = '';
 $idNE = '';
 
 $FC = false;
@@ -327,7 +328,7 @@ while($row = $rs->fetch_array(MYSQLI_ASSOC)){
 
 		if ((boolean)$row['pre_impreso'] === true) {
 			$pp_check = 'checked';
-			$no_poliza = $idNE;
+			$no_preprinted = $row['no_preprinted'];
 		}
 
 		$bill_name = $row['factura_nombre'];
@@ -1005,15 +1006,15 @@ foreach ($beneficiaryData as $key => $value) {
 		<label style="width: auto; font-size: 110%; 
 			margin-left: 40px;">
             <input class="check" type="checkbox" id="di-print" name="di-print" 
-            	value="1" <?=$pp_check . ' ' . $read_new;?>>
+            	value="1" <?=$pp_check . ' ' . $read_save;?>>
 			&nbsp;&nbsp;Certificado Pre-Impreso
 		</label>
 	</div><!--
 	--><div class="form-col">
-		<label style="width: auto;">Número de Póliza: <span></span></label>
+		<label style="width: auto;">Número de Pre-Impreso: <span></span></label>
 		<div class="content-input">
 			<input type="text" id="di-policy-pp" name="di-policy-pp" 
-				autocomplete="off" value="<?=$no_poliza;?>" 
+				autocomplete="off" value="<?=$no_preprinted;?>" 
 				class="fbin number <?=$pp_po_re;?>" <?=$pp_po_ro . ' ' . $read_new;?>>
 		</div><br>
 	</div>

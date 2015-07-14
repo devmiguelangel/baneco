@@ -22,16 +22,8 @@ if ($token === true){
 			$ms = $link->real_escape_string(trim($_POST['ms']));
 			$page = $link->real_escape_string(trim($_POST['page']));
 			$pr = $link->real_escape_string(trim($_POST['pr']));
-			$print = false;
-			$print_url = '';
+			
 			$beneficiary = $link->getBeneficiary();
-
-			if (isset($_POST['print'])) {
-				if ($_POST['print'] === sha1('p_print')) {
-					$print = true;
-					$print_url = '&print=' . $link->real_escape_string(trim($_POST['print']));
-				}
-			}
 		
 			$max_item = 0;
 			if (($rowDE = $link->get_max_amount_optional($_SESSION['idEF'], 'VI')) !== false) {
@@ -108,11 +100,11 @@ if ($token === true){
 					$arr_qs = array(1 => array());
 					$arr_res = array(1 => '');
 
-					if ($print === true && isset($_POST['di-print'], $_POST['di-policy-pp'])) {
+					if (isset($_POST['di-print'], $_POST['di-policy-pp'])) {
 						$dcr_print = 1;
 						$dcr_policy_pp = $link->real_escape_string(trim($_POST['di-policy-pp']));
 
-						if (($data = $link->check_policy_pp($_SESSION['idUser'], 'VI', $dcr_policy_pp)) !== false) {
+						/*if (($data = $link->check_policy_pp($_SESSION['idUser'], 'VI', $dcr_policy_pp)) !== false) {
 							$dcr_rango = '"' . $data['id_rango'] . '"';
 
 							if (($rsQs = $link->get_question($_SESSION['idEF'], 'VI')) !== false) {
@@ -139,7 +131,7 @@ if ($token === true){
 							$rank = false;
 							$rank_mess = 'La Agencia no tiene asignado el Número de Póliza ' 
 								. $dcr_policy_pp;
-						}
+						}*/
 					}
 										
 					$cont = 0;
@@ -310,17 +302,9 @@ if ($token === true){
 
 						$arr_cl[$cont]['sql'] = '';
 						if (isset($_POST['dd-'.$cont.'-id_detalle'])) {
-							if ($print === true) {
-								$arr_cl[$cont]['sql'] .= '("' . uniqid('@S#1$2014', true) . '", 
-									"' . $arr_cl[$cont]['cl-d-idd'] . '", 
-									"' . $link->real_escape_string(json_encode($arr_qs[$cont])) . '", 
-									"' . $arr_res[$cont] . '")';
-							} else {
-								$id_detalle = base64_decode($_POST['dd-' . $cont . '-id_detalle']);
-								$arr_cl[$cont]['sql'] = 
-									get_result_question($link, $id_detalle, $arr_cl[$cont]['cl-d-idd']);
-							}
-
+							$id_detalle = base64_decode($_POST['dd-' . $cont . '-id_detalle']);
+							$arr_cl[$cont]['sql'] = 
+								get_result_question($link, $id_detalle, $arr_cl[$cont]['cl-d-idd']);
 						}
 					}
 					
@@ -342,18 +326,11 @@ if ($token === true){
 							$ws_usuario = $row_user['u_usuario'];
 						}
 
-						$idc = 'null';
-						if ($print === false) {
-							$idc = '"' . $link->real_escape_string(trim(base64_decode($_POST['de-idc']))) . '"';
-						}
+						$idc = '"' . $link->real_escape_string(trim(base64_decode($_POST['de-idc']))) . '"';
 						
 						$ID = uniqid('@S#1$2013',true);
 						$record = $link->getRegistrationNumber($_SESSION['idEF'], 'VI', 1, $prefix[0]);
 						$dcr_no_policy += $record;
-
-						if ($print === true) {
-							$dcr_no_policy = $dcr_policy_pp;
-						}
 
 						if ($link->check_no_policy('VI', $dcr_no_policy) === false) {
 							$policy_mess = 'El Número de Póliza ya fue registrado. <br>';
@@ -362,7 +339,7 @@ if ($token === true){
 						
 						$sqlC = 'insert into s_vi_em_cabecera 
 						(id_emision, no_emision, no_poliza, id_ef, id_cotizacion, prefijo, prefix,
-							pre_impreso, id_rango, cobertura, id_usuario, factura_nombre, 
+							pre_impreso, no_preprinted, id_rango, cobertura, id_usuario, factura_nombre, 
 							factura_nit, fecha_creacion, anulado, and_usuario, fecha_anulado, 
 							motivo_anulado, emitir, fecha_emision, id_compania, id_poliza, id_plan, 
 							forma_pago, periodo, prima, no_copia, leido, id_certificado) 
@@ -370,7 +347,7 @@ if ($token === true){
 						("' . $ID . '", "' . $record . '", "' . $dcr_no_policy . '", 
 							"' . base64_decode($_SESSION['idEF']) . '", ' . $idc . ', 
 							"' . $prefix[0] . '", ' . $arrPrefix . ', "' . $dcr_print . '", 
-							' . $dcr_rango . ', ' . $cont . ', 
+							"' . $dcr_policy_pp . '", ' . $dcr_rango . ', ' . $cont . ', 
 							"' . base64_decode($_SESSION['idUser']) . '", "' . $bill_name . '", 
 							"' . $bill_nit . '", curdate(), false, 
 							"' . base64_decode($_SESSION['idUser']) . '", "", "", false, "", 
@@ -542,7 +519,7 @@ if ($token === true){
 								do{
 									if ($link->errno !== 0)
 										$swCl = true;
-								}while($link->next_result());
+								}while($link->more_results() && $link->next_result());
 								
 								if ($swCl === false){
 									if ($link->query($sqlD) === true){
@@ -577,7 +554,7 @@ if ($token === true){
 												. '&page=' . $page . '&pr=' . $pr 
 												. '&ide=' . base64_encode($ID) 
 												. '&flag=' . md5('i-read') . '&cia=' 
-												. base64_encode($dcr_cia) . $print_url;
+												. base64_encode($dcr_cia);
 												$arrDE[2] = 'La Póliza fue registrada con exito' . $ws_mess;
 											}else {
 												$arrDE[2] = 'No se pudo registrar a los Beneficiarios';
@@ -602,7 +579,9 @@ if ($token === true){
 						
 						$sqlC = 'update s_vi_em_cabecera 
 						set 
-							id_poliza = "' . $dcr_policy . '", 
+							id_poliza = "' . $dcr_policy . '",
+							pre_impreso = "' . $dcr_print . '",
+							no_preprinted = "' . $dcr_policy_pp . '",
 							no_copia = 0, 
 							leido = false,
 							id_certificado = 1,
@@ -610,7 +589,8 @@ if ($token === true){
 							forma_pago = "' . $dcr_payment . '", 
 							periodo = "' . $dcr_period . '", 
 							prima = "' . $dcr_prima . '"
-						where id_emision = "' . $ide . '" ;';
+						where id_emision = "' . $ide . '"
+						;';
 						
 						$sw_UCl = false;
 						$sw_UB = false;
@@ -730,7 +710,7 @@ if ($token === true){
 											. '&ide=' . base64_encode($ide) 
 											. '&flag=' . md5('i-read') 
 											. '&cia=' . base64_encode($dcr_cia) 
-											. $target_url . $print_url;
+											. $target_url;
 										$arrDE[2] = 'La Póliza fue actualizada correctamente !';
 									}else {
 										$arrDE[2] = 'No se pudo actualizar los Beneficiarios';
