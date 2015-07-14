@@ -362,7 +362,7 @@ if (($rsMenu = $link->get_product_menu($_SESSION['idEF'])) !== FALSE) {
 					<?php endif ?>
 				<?php endif ?>
 
-				<?php if ($rowMenu['producto'] !== 'TH' && $rowMenu['producto'] !== 'VI'): ?>
+				<?php if ($rowMenu['producto'] !== 'TH' && $rowMenu['producto'] !== 'VI' && $user_type === 'REP'): ?>
 					<li><a href="index.php?ms=<?=md5('MS_'.$rowMenu['producto']);?>&page=<?=md5('P_cancel');?>" class="link-pr">
 						Anular Póliza
 					</a></li>
