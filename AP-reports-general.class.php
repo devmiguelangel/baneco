@@ -48,6 +48,11 @@ class ReportsGeneralAP{
 		// $this->data['r-clientbs'] = $this->cx->real_escape_string(trim($data['r-clientbs']));
 		$this->data['r-state-account'] = $this->cx->real_escape_string(trim($data['r-state-account']));
 		$this->data['r-mora'] = $this->cx->real_escape_string(trim($data['r-mora']));
+		$this->data['preprinted'] = $this->cx->real_escape_string(trim($data['r-preprinted']));
+		$this->data['no_preprinted'] = $this->cx->real_escape_string(trim($data['r-no_preprinted']));
+		if ((int)$this->data['preprinted'] !== 1) {
+			$this->data['no_preprinted'] = '';
+		}
 
 		$this->data['idUser'] = $this->cx->real_escape_string(trim(base64_decode($data['r-idUser'])));
 
@@ -159,6 +164,8 @@ class ReportsGeneralAP{
 			sde.no_emision as r_no_emision,
 			sde.no_poliza as r_no_poliza,
 			sde.prefijo as r_prefijo,
+			sde.pre_impreso,
+			sde.no_preprinted,
 			sde.id_compania,
 			su.nombre as r_creado_por,
 			date_format(sde.fecha_creacion, '%d/%m/%Y') as r_fecha_creacion,
@@ -215,7 +222,7 @@ class ReportsGeneralAP{
 		$this->sql .= "
 				inner join
 			s_usuario as su ON (su.id_usuario = sde.id_usuario)
-				inner join
+				left join
 			s_departamento as sdep ON (sdep.id_depto = su.id_depto)
 				left join
 			s_agencia as sag ON (sag.id_agencia = su.id_agencia)
@@ -240,20 +247,25 @@ class ReportsGeneralAP{
 				and sc.complemento like '%".$this->data['comp']."%'
 				and sc.extension like '%".$this->data['ext']."%'
 				and sde.fecha_creacion between '".$this->data['date-begin']."' and '".$this->data['date-end']."'
-				and sdep.id_depto like '" . $this->data['subsidiary'] . "'
-				and sag.id_agencia like '%" . $this->data['agency'] . "%' ";
+				and (sdep.id_depto like '" . $this->data['subsidiary'] . "'
+					or sdep.id_depto is null)
+				and (sag.id_agencia like '%" . $this->data['agency'] . "%'
+					or sag.id_agencia is null) ";
 		if($this->token === 'RG'){
 			//and sde.id_poliza like '%".$this->data['policy']."%'
 			$this->sql .= "and if(sde.emitir = true,
 				'EM', 'NE') regexp '".$this->data['r-issued']."'
-				-- and if(sde.anulado = true, 'AN', 'R') regexp '".$this->data['r-canceled']."'
 				and sde.anulado like '%".$this->data['r-canceled']."%'
 				and if(sde.emitir = true, sde.estado, 'R') regexp '".$this->data['r-state-account']."'
+				and sde.pre_impreso like '%" . $this->data['preprinted'] . "%'
+				and sde.no_preprinted like '%" . $this->data['no_preprinted'] . "%'
 				";
 		}elseif($this->token === 'RP'){
 			$this->sql .= "and sde.emitir = true
-							and sde.anulado like '%".$this->data['r-canceled']."%'
-							";
+				and sde.anulado like '%".$this->data['r-canceled']."%'
+				and sde.pre_impreso like '%" . $this->data['preprinted'] . "%'
+				and sde.no_preprinted like '%" . $this->data['no_preprinted'] . "%'
+				";
 		}elseif($this->token === 'PA'){
 			$this->sql .= "and sde.emitir = false
 							and sde.anulado like '%".$this->data['r-canceled']."%'
@@ -494,6 +506,8 @@ $(document).ready(function(e) {
             <td>Certificados Anulados</td>
             <td>Anulado Por</td>
             <td><?=htmlentities('Fecha de Anulación');?></td>
+            <td>Pre-Impreso</td>
+            <td>No. Certificado Pre-Impreso</td>
             <!--<td>Días de Ultima Modificación</td>-->
 <?php if ($this->token === 'RP' && $this->xls === false): ?>
 			<td>Adjuntar Archivo</td>
@@ -502,9 +516,11 @@ $(document).ready(function(e) {
     </thead>
     <tbody>
 <?php
-		$swBG = FALSE;
-		$arr_state = array('txt' => '', 'action' => '', 'obs' => '', 'link' => '', 'bg' => '');
-		$bgCheck = '';
+		$swBG 		= FALSE;
+		$bgCheck 	= '';
+		$arr_state 	= array('txt' => '', 'action' => '', 'obs' => '', 'link' => '', 'bg' => '');
+		$preprinted = array(1 => 'SI', 0 => 'NO');
+
 		while($this->row = $this->rs->fetch_array(MYSQLI_ASSOC)){
 			$nCl = (int)$this->row['no_cl'];
 			if($swBG === FALSE){
@@ -628,6 +644,8 @@ $(document).ready(function(e) {
             <td><?=$this->row['r_anulado'];?></td>
             <td><?=htmlentities($this->row['r_anulado_nombre'], ENT_QUOTES, 'UTF-8');?></td>
             <td><?=$this->row['r_anulado_fecha'];?></td>
+            <td><?= $preprinted[$this->row['pre_impreso']] ;?></td>
+            <td><?= $this->row['no_preprinted'] ;?></td>
             <!--<td>Días de Ultima Modificación</td>-->
 <?php if ($this->token === 'RP' && $this->xls === false): ?>
 			<td style="padding: 3px 5px;">

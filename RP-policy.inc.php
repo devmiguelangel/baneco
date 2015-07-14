@@ -392,6 +392,21 @@ if($rsEx->data_seek(0) === TRUE){
             <input type="hidden" id="data-pr" name="data-pr" value="<?=base64_encode($rowMenu['producto']);?>" >
             <input type="hidden" id="pr" name="pr" value="<?=$rowMenu['producto'];?>">
             <br>
+
+            <div id="accordion" class="accordion">
+            	<h5>Pre-Impresos</h5>
+                <div>
+                	<label class="lbl-cb"><input type="radio" id="frp-preprinted-si" 
+                		name="frp-preprinted" value="1">&nbsp;SI</label>
+					<label class="lbl-cb"><input type="radio" id="frp-preprinted-no" 
+						name="frp-preprinted" value="0" checked>&nbsp;NO</label>
+					<label class="lbl-cb"><input type="radio" id="frp-preprinted-both" 
+		            	name="frp-preprinted" value="">&nbsp;Todos</label>
+
+		            <label style="width: auto; font-size: 90%;">N° de Pre-Impresos: </label>
+					<input type="text" id="frp-no_preprinted" name="frp-no_preprinted" value="" autocomplete="off">
+                </div>
+            </div>
             <!--<div id="accordion">
                 <h5>Pendiente</h5>
                 <div>

@@ -172,13 +172,15 @@ if(isset($_GET['data-pr']) && isset($_GET['flag'])){
 	}
 
 	$arrData['r-mora'] = '';
-	if ($xls === false) {
-		if(isset($_GET['frp-mora'])) { $arrData['r-mora'] = $_GET['frp-mora']; }
-	} else {
-		if(isset($_GET['frp-mora'])) { $arrData['r-mora'] = $_GET['frp-mora']; }
-	}
+	if(isset($_GET['frp-mora'])) { $arrData['r-mora'] = $_GET['frp-mora']; }
 	//echo $arrData['r-canceled'];
 	
+	$arrData['r-preprinted'] = '';
+	if(isset($_GET['frp-preprinted'])) { $arrData['r-preprinted'] = $_GET['frp-preprinted']; }
+	
+	$arrData['r-no_preprinted'] = '';
+	if(isset($_GET['frp-no_preprinted'])) { $arrData['r-no_preprinted'] = $_GET['frp-no_preprinted']; }
+
 	$arrData['ms'] = $_GET['ms'];
 	$arrData['page'] = $_GET['page'];
 	
