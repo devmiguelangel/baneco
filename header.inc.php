@@ -368,17 +368,6 @@ if (($rsMenu = $link->get_product_menu($_SESSION['idEF'])) !== FALSE) {
 					</a></li>
 				<?php endif ?>
 
-				<?php if ($rowMenu['producto'] === 'AP' || $rowMenu['producto'] === 'VI'): ?>
-					<li>
-						<a href="<?=strtolower($rowMenu['producto']);?>-quote.php?ms=<?=
-							md5('MS_' . $rowMenu['producto']);?>&page=<?=
-							md5('');?>&pr=<?=
-							base64_encode($rowMenu['producto'] . '|05');?>&idc=&flag=<?=
-							md5('i-new');?>&cia=&print=<?=sha1('p_print');?>" 
-							class="link-pr">Registro de Pre-Impresos</a>
-					</li>
-				<?php endif ?>
-
 				<?php if ($rowMenu['producto'] === 'AU' || $rowMenu['producto'] === 'TRD'): ?>
 					<li><a href="index.php?ms=<?=md5('MS_'.$rowMenu['producto']);?>&page=<?=md5('P_provisional');?>" class="link-pr">
 						Certificados Provisionales
