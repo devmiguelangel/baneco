@@ -262,29 +262,39 @@ if ($token === true){
 						$arr_cl[$cont]['per_mess'] = '';
 
 						for ($i = 1; $i <= $beneficiary; $i++) {
-							if (isset($_POST['dsp-' . $cont . '-idb-' . $i])) {
+							$arr_cl[$cont]['cl-bn-active-' . $i] = false;
+
+							if (isset($_POST['dsp-active-' . $cont . '-' . $i])) {
+								$arr_cl[$cont]['cl-bn-active-' . $i] = true;
+
+								if (isset($_POST['dsp-' . $cont . '-idb-' . $i])) {
+									$arr_cl[$cont]['cl-bn-idb-' . $i] = 
+										$link->real_escape_string(trim(
+											base64_decode($_POST['dsp-' . $cont . '-idb-' . $i])));
+								} else {
+									$arr_cl[$cont]['cl-bn-idb-' . $i] = uniqid('@S#1$2013' . $cont, true);
+								}
+
+								$arr_cl[$cont]['cl-bn-name-' . $i] = 
+									$link->real_escape_string(trim($_POST['dsp-' . $cont . '-name-' . $i]));
+								$arr_cl[$cont]['cl-bn-patern-' . $i] = 
+									$link->real_escape_string(trim($_POST['dsp-' . $cont . '-patern-' . $i]));
+								$arr_cl[$cont]['cl-bn-matern-' . $i] = 
+									$link->real_escape_string(trim($_POST['dsp-' . $cont . '-matern-' . $i]));
+								$arr_cl[$cont]['cl-bn-relation-' . $i] = 
+									$link->real_escape_string(trim($_POST['dsp-' . $cont . '-relation-' . $i]));
+								$arr_cl[$cont]['cl-bn-dni-' . $i] = 
+									$link->real_escape_string(trim($_POST['dsp-' . $cont . '-dni-' . $i]));
+								$arr_cl[$cont]['cl-bn-por-' . $i] = 
+									$link->real_escape_string(trim($_POST['dsp-' . $cont . '-por-' . $i]));
+								$arr_cl[$cont]['cl-bn-cov-' . $i] = 'BN';
+
+								$arr_cl[$cont]['percentage'] += (float)$arr_cl[$cont]['cl-bn-por-' . $i];
+							} elseif (isset($_POST['dsp-' . $cont . '-idb-' . $i])) {
 								$arr_cl[$cont]['cl-bn-idb-' . $i] = 
 									$link->real_escape_string(trim(
 										base64_decode($_POST['dsp-' . $cont . '-idb-' . $i])));
-							} else {
-								$arr_cl[$cont]['cl-bn-idb-' . $i] = uniqid('@S#1$2013' . $cont, true);
 							}
-
-							$arr_cl[$cont]['cl-bn-name-' . $i] = 
-								$link->real_escape_string(trim($_POST['dsp-' . $cont . '-name-' . $i]));
-							$arr_cl[$cont]['cl-bn-patern-' . $i] = 
-								$link->real_escape_string(trim($_POST['dsp-' . $cont . '-patern-' . $i]));
-							$arr_cl[$cont]['cl-bn-matern-' . $i] = 
-								$link->real_escape_string(trim($_POST['dsp-' . $cont . '-matern-' . $i]));
-							$arr_cl[$cont]['cl-bn-relation-' . $i] = 
-								$link->real_escape_string(trim($_POST['dsp-' . $cont . '-relation-' . $i]));
-							$arr_cl[$cont]['cl-bn-dni-' . $i] = 
-								$link->real_escape_string(trim($_POST['dsp-' . $cont . '-dni-' . $i]));
-							$arr_cl[$cont]['cl-bn-por-' . $i] = 
-								$link->real_escape_string(trim($_POST['dsp-' . $cont . '-por-' . $i]));
-							$arr_cl[$cont]['cl-bn-cov-' . $i] = 'BN';
-
-							$arr_cl[$cont]['percentage'] += (float)$arr_cl[$cont]['cl-bn-por-' . $i];
 						}
 
 						if ($arr_cl[$cont]['percentage'] != 100) {
@@ -489,10 +499,11 @@ if ($token === true){
 							$sqlRs .= $arr_cl[$k]['sql'] . ',';
 							
 							for ($i = 1; $i <= $beneficiary ; $i++) {
-								if (empty($arr_cl[$k]['cl-bn-patern-' . $i]) === false
-									&& empty($arr_cl[$k]['cl-bn-name-' . $i]) === false 
-									&& empty($arr_cl[$k]['cl-bn-relation-'.$i]) === false 
-									&& empty($arr_cl[$k]['cl-bn-por-' . $i]) === false) {
+								if ($arr_cl[$k]['cl-bn-active-' . $i]
+									&& !empty($arr_cl[$k]['cl-bn-name-' . $i])
+									&& !empty($arr_cl[$k]['cl-bn-patern-' . $i])
+									&& !empty($arr_cl[$k]['cl-bn-relation-'.$i])
+									&& !empty($arr_cl[$k]['cl-bn-por-' . $i])) {
 									
 									$sqlBN .= '(
 									"' . $arr_cl[$k]['cl-bn-idb-' . $i] . '", 
@@ -655,48 +666,58 @@ if ($token === true){
 								}
 								
 								for ($i = 1; $i <= $beneficiary; $i++) {
-									if (empty($arr_cl[$k]['cl-bn-idb-' . $i]) === true
-										&& empty($arr_cl[$k]['cl-bn-patern-' . $i]) === false
-										&& empty($arr_cl[$k]['cl-bn-name-' . $i]) === false 
-										&& empty($arr_cl[$k]['cl-bn-relation-'.$i]) === false 
-										&& empty($arr_cl[$k]['cl-bn-por-' . $i]) === false) {
+									if ($arr_cl[$k]['cl-bn-active-' . $i]) {
+										if (empty($arr_cl[$k]['cl-bn-idb-' . $i])
+											&& !empty($arr_cl[$k]['cl-bn-name-' . $i]) 
+											&& !empty($arr_cl[$k]['cl-bn-patern-' . $i])
+											&& !empty($arr_cl[$k]['cl-bn-relation-'.$i]) 
+											&& !empty($arr_cl[$k]['cl-bn-por-' . $i])) {
 
-										$arr_cl[$cont]['cl-bn-idb-' . $i] = 
-											uniqid('@S#1$2013' . $i, true);
+											$arr_cl[$cont]['cl-bn-idb-' . $i] = 
+												uniqid('@S#1$2013' . $i, true);
 
-										$sqlBN = 'INSERT INTO s_vi_beneficiario 
-										(id_beneficiario, id_detalle, cobertura, paterno, materno, 
-											nombre, ci, parentesco, porcentaje_credito)
-										VALUES 
-										("' . $arr_cl[$k]['cl-bn-idb-' . $i] . '", 
-										"' . $arr_cl[$k]['cl-d-idd'] . '", 
-										"' . $arr_cl[$k]['cl-bn-cov-' . $i] . '", 
-										"' . $arr_cl[$k]['cl-bn-patern-' . $i] . '", 
-										"' . $arr_cl[$k]['cl-bn-matern-' . $i] . '", 
-										"' . $arr_cl[$k]['cl-bn-name-' . $i] . '", 
-										"' . $arr_cl[$k]['cl-bn-dni-' . $i] .'", 
-										"' . $arr_cl[$k]['cl-bn-relation-' . $i] . '", 
-										"' . $arr_cl[$k]['cl-bn-por-' . $i] . '");';
-									} else {
-										$sqlBN = 'update 
-											s_vi_beneficiario 
-										set
-											cobertura = "' . $arr_cl[$k]['cl-bn-cov-' . $i] . '", 
-											paterno = "' . $arr_cl[$k]['cl-bn-patern-' . $i] . '", 
-											materno = "' . $arr_cl[$k]['cl-bn-matern-' . $i] . '", 
-											nombre = "' . $arr_cl[$k]['cl-bn-name-' . $i] . '", 
-											ci = "' . $arr_cl[$k]['cl-bn-dni-' . $i] .'", 
-											parentesco = "' . $arr_cl[$k]['cl-bn-relation-' . $i] . '", 
-											porcentaje_credito = "' . $arr_cl[$k]['cl-bn-por-' . $i] . '"
-										where 
-											id_beneficiario = "' . $arr_cl[$k]['cl-bn-idb-' . $i] . '" 
+											$sqlBN = 'INSERT INTO s_vi_beneficiario 
+											(id_beneficiario, id_detalle, cobertura, paterno, materno, 
+												nombre, ci, parentesco, porcentaje_credito)
+											VALUES 
+											("' . $arr_cl[$k]['cl-bn-idb-' . $i] . '", 
+											"' . $arr_cl[$k]['cl-d-idd'] . '", 
+											"' . $arr_cl[$k]['cl-bn-cov-' . $i] . '", 
+											"' . $arr_cl[$k]['cl-bn-patern-' . $i] . '", 
+											"' . $arr_cl[$k]['cl-bn-matern-' . $i] . '", 
+											"' . $arr_cl[$k]['cl-bn-name-' . $i] . '", 
+											"' . $arr_cl[$k]['cl-bn-dni-' . $i] .'", 
+											"' . $arr_cl[$k]['cl-bn-relation-' . $i] . '", 
+											"' . $arr_cl[$k]['cl-bn-por-' . $i] . '");';
+										} else {
+											$sqlBN = 'update 
+												s_vi_beneficiario 
+											set
+												cobertura = "' . $arr_cl[$k]['cl-bn-cov-' . $i] . '", 
+												paterno = "' . $arr_cl[$k]['cl-bn-patern-' . $i] . '", 
+												materno = "' . $arr_cl[$k]['cl-bn-matern-' . $i] . '", 
+												nombre = "' . $arr_cl[$k]['cl-bn-name-' . $i] . '", 
+												ci = "' . $arr_cl[$k]['cl-bn-dni-' . $i] .'", 
+												parentesco = "' . $arr_cl[$k]['cl-bn-relation-' . $i] . '", 
+												porcentaje_credito = "' . $arr_cl[$k]['cl-bn-por-' . $i] . '"
+											where 
+												id_beneficiario = "' . $arr_cl[$k]['cl-bn-idb-' . $i] . '" 
+													and cobertura = "BN" ;';
+										}
+										
+										goto Bn_sql;
+									} elseif (!empty($arr_cl[$k]['cl-bn-idb-' . $i])) {
+										$sqlBN = 'delete from s_vi_beneficiario
+										where
+											id_beneficiario = "' . $arr_cl[$k]['cl-bn-idb-' . $i] . '"
 												and cobertura = "BN" ;';
-									}
 
-									if ($link->query($sqlBN) === true) {
-										$sw_UB = true;
-									} else {
-										$sw_UB = false;
+										Bn_sql:
+										if ($link->query($sqlBN) === true) {
+											$sw_UB = true;
+										} else {
+											$sw_UB = false;
+										}
 									}
 								}
 							}

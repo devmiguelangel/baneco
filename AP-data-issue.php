@@ -776,15 +776,12 @@ for ($i = 1; $i <= $beneficiary; $i++) {
 	$beneficiaryData[$i]['matern'] = '';
 	$beneficiaryData[$i]['relation'] = '';
 	$beneficiaryData[$i]['dni'] = '';
-	$beneficiaryData[$i]['percentage'] = 0;
+	$beneficiaryData[$i]['percentage'] = '';
 
-	if ($i === 1) {
-		$beneficiaryData[$i]['class'] = 'required';
-		$beneficiaryData[$i]['star'] = '*';
-	} else {
-		$beneficiaryData[$i]['class'] = 'not-required';
-		$beneficiaryData[$i]['star'] = '';
-	}
+	$beneficiaryData[$i]['class'] 		= 'not-required';
+	$beneficiaryData[$i]['star'] 		= '';
+	$beneficiaryData[$i]['disabled'] 	= 'disabled';
+	$beneficiaryData[$i]['checked'] 	= '';
 }
 
 if ($sw !== 1) {
@@ -808,6 +805,7 @@ if ($sw !== 1) {
 	// echo $rsBN->num_rows;
 	if($rsBN->num_rows > 0){
 		$bn = 1;
+
 		while ($rowBN = $rsBN->fetch_array(MYSQLI_ASSOC)) {
 			$beneficiaryData[$bn]['id'] = $rowBN['id_beneficiario'];
 			$beneficiaryData[$bn]['name'] = $rowBN['nombre'];
@@ -816,6 +814,8 @@ if ($sw !== 1) {
 			$beneficiaryData[$bn]['relation'] = $rowBN['parentesco'];
 			$beneficiaryData[$bn]['dni'] = $rowBN['ci'];
 			$beneficiaryData[$bn]['percentage'] = $rowBN['porcentaje_credito'];
+			$beneficiaryData[$bn]['disabled'] = '';
+			$beneficiaryData[$bn]['checked'] = 'checked';
 			$bn += 1;
 		}
 	}
@@ -826,11 +826,18 @@ foreach ($beneficiaryData as $key => $value) {
 	$nbn += 1;
 ?>
 	<div class="form-col">
-		<h4>Declaratoria de Beneficiario <?=$nbn;?> - Titular <?=$cont;?></h4>
+		<h4>
+			Declaratoria de Beneficiario <?=$nbn;?> - Titular <?=$cont;?>&nbsp;
+			<input class="check dsp-active" type="checkbox" 
+				id="dsp-active-<?= $cont ;?>-<?=$nbn;?>" 
+				name="dsp-active-<?= $cont ;?>-<?=$nbn;?>" value="1"
+				data-cl="<?= $cont ;?>" data-bn="<?= $nbn ;?>" 
+				<?= $beneficiaryData[$nbn]['checked'] ;?>>
+		</h4>
 		<label>Nombres: <span><?=$beneficiaryData[$nbn]['star'];?></span></label>
 		<div class="content-input">
 			<input type="text" id="dsp-<?=$cont;?>-name-<?=$nbn;?>" 
-				name="dsp-<?=$cont;?>-name-<?=$nbn;?>" 
+				name="dsp-<?=$cont;?>-name-<?=$nbn;?>" <?= $beneficiaryData[$nbn]['disabled'] ;?>
 				autocomplete="off" value="<?=$beneficiaryData[$nbn]['name'];?>" 
 				class="<?=$beneficiaryData[$nbn]['class'];?> text fbin" <?=$read_save;?>>
 		</div><br>		
@@ -838,7 +845,7 @@ foreach ($beneficiaryData as $key => $value) {
 		<label>Apellido Paterno: <span><?=$beneficiaryData[$nbn]['star'];?></span></label>
 		<div class="content-input">
 			<input type="text" id="dsp-<?=$cont;?>-ln-patern-<?=$nbn;?>" 
-				name="dsp-<?=$cont;?>-patern-<?=$nbn;?>" 
+				name="dsp-<?=$cont;?>-patern-<?=$nbn;?>" <?= $beneficiaryData[$nbn]['disabled'] ;?>
 				autocomplete="off" value="<?=$beneficiaryData[$nbn]['patern'];?>" 
 				class="<?=$beneficiaryData[$nbn]['class'];?> text fbin" <?=$read_save;?>>
 		</div><br>
@@ -846,7 +853,7 @@ foreach ($beneficiaryData as $key => $value) {
 		<label>Apellido Materno: </label>
 		<div class="content-input">
 			<input type="text" id="dsp-<?=$cont;?>-ln-matern-<?=$nbn;?>" 
-				name="dsp-<?=$cont;?>-matern-<?=$nbn;?>" 
+				name="dsp-<?=$cont;?>-matern-<?=$nbn;?>" <?= $beneficiaryData[$nbn]['disabled'] ;?>
 				autocomplete="off" value="<?=$beneficiaryData[$nbn]['matern'];?>" 
 				class="not-<?=$beneficiaryData[$nbn]['class'];?> text fbin" <?=$read_save;?>>
 		</div><br>
@@ -854,7 +861,7 @@ foreach ($beneficiaryData as $key => $value) {
 		<label>Parentesco: <span><?=$beneficiaryData[$nbn]['star'];?></span></label>
 		<div class="content-input">
 			<input type="text" id="dsp-<?=$cont;?>-relation-<?=$nbn;?>" 
-				name="dsp-<?=$cont;?>-relation-<?=$nbn;?>" 
+				name="dsp-<?=$cont;?>-relation-<?=$nbn;?>" <?= $beneficiaryData[$nbn]['disabled'] ;?>
 				autocomplete="off" value="<?=$beneficiaryData[$nbn]['relation'];?>" 
 				class="<?=$beneficiaryData[$nbn]['class'];?> text fbin" <?=$read_save;?>>
 		</div><br>
@@ -862,7 +869,7 @@ foreach ($beneficiaryData as $key => $value) {
 		<label>Documento de Identidad: <span></span></label>
 		<div class="content-input">
 			<input type="text" id="dsp-<?=$cont;?>-dni-<?=$nbn;?>" 
-				name="dsp-<?=$cont;?>-dni-<?=$nbn;?>" 
+				name="dsp-<?=$cont;?>-dni-<?=$nbn;?>" <?= $beneficiaryData[$nbn]['disabled'] ;?>
 				autocomplete="off" value="<?=$beneficiaryData[$nbn]['dni'];?>" 
 				class="not-<?=$beneficiaryData[$nbn]['class'];?> dni fbin" <?=$read_save;?>>
 		</div><br>
@@ -870,7 +877,7 @@ foreach ($beneficiaryData as $key => $value) {
 		<label>Participación %: <span><?=$beneficiaryData[$nbn]['star'];?></span></label>
 		<div class="content-input">
 			<input type="text" id="dsp-<?=$cont;?>-por-<?=$nbn;?>" 
-				name="dsp-<?=$cont;?>-por-<?=$nbn;?>" 
+				name="dsp-<?=$cont;?>-por-<?=$nbn;?>" <?= $beneficiaryData[$nbn]['disabled'] ;?>
 				maxlength="3" autocomplete="off" value="<?=$beneficiaryData[$nbn]['percentage'];?>" 
 				class="<?=$beneficiaryData[$nbn]['class'];?> real fbin" <?=$read_save;?>>
 		</div><br>
@@ -1119,6 +1126,38 @@ $(document).ready(function(e) {
 	$('.check').iCheck({
 		checkboxClass: 'icheckbox_flat-red',
 		radioClass: 'iradio_flat-red'
+	});
+
+	$('.dsp-active').on('ifChanged', function(e) {
+		var data_cl = $(this).attr('data-cl');
+		var data_bn = $(this).attr('data-bn');
+		var class_1	= 'not-required';
+		var class_2	= 'required';
+		var data_dis = true;
+
+		if ($(this).is(':checked')) {
+			class_1 = 'not-required';
+			class_2 = 'required';
+			var data_dis = false;
+		} else {
+			class_1 = 'required';
+			class_2 = 'not-required';
+		}
+
+		$("#dsp-" + data_cl + "-name-" + data_bn + ", " + 
+			"#dsp-" + data_cl + "-ln-patern-" + data_bn + ", " + 
+			"#dsp-" + data_cl + "-relation-" + data_bn + ", " + 
+			"#dsp-" + data_cl + "-dni-" + data_bn + ", " + 
+			"#dsp-" + data_cl + "-por-" + data_bn)
+		.removeClass(class_1).addClass(class_2);
+
+		$("#dsp-" + data_cl + "-name-" + data_bn + ", " + 
+			"#dsp-" + data_cl + "-ln-patern-" + data_bn + ", " + 
+			"#dsp-" + data_cl + "-ln-matern-" + data_bn + ", " + 
+			"#dsp-" + data_cl + "-relation-" + data_bn + ", " + 
+			"#dsp-" + data_cl + "-dni-" + data_bn + ", " + 
+			"#dsp-" + data_cl + "-por-" + data_bn)
+		.prop('disabled', data_dis);
 	});
 
 	$('.account, .card').keyup(function(e){
