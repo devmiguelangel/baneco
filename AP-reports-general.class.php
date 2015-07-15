@@ -520,13 +520,23 @@ $(document).ready(function(e) {
 		$bgCheck 	= '';
 		$arr_state 	= array('txt' => '', 'action' => '', 'obs' => '', 'link' => '', 'bg' => '');
 		$preprinted = array(1 => 'SI', 0 => 'NO');
+		$bg_row 	= '';
 
 		while($this->row = $this->rs->fetch_array(MYSQLI_ASSOC)){
 			$nCl = (int)$this->row['no_cl'];
-			if($swBG === FALSE){
-				$bg = 'background: #EEF9F8;';
-			}elseif($swBG === TRUE){
-				$bg = 'background: #D1EBSA;';
+			
+			if ($this->token === 'RP') {
+				if (empty($this->row['po_archivo'])) {
+					$bg_row = 'atch_pn';
+				} else {
+					$bg_row = 'atch_py';
+				}
+			} else {
+				if($swBG === FALSE){
+					$bg = 'background: #EEF9F8;';
+				}elseif($swBG === TRUE){
+					$bg = 'background: #D1EBSA;';
+				}
 			}
 
 			$rowSpan = FALSE;
@@ -607,7 +617,7 @@ $(document).ready(function(e) {
 							$rowSpan = '';
 						}
 ?>
-		<tr style=" <?=$bg;?> " class="row" rel="0"
+		<tr style=" <?=$bg;?> " class="row <?= $bg_row ;?>" rel="0"
 			data-nc="<?=base64_encode($this->row['ide']);?>"
 			data-token="<?=$this->dataToken;?>"
 			data-issue="<?=base64_encode(0);?>">
@@ -649,7 +659,7 @@ $(document).ready(function(e) {
             <!--<td>Días de Ultima Modificación</td>-->
 <?php if ($this->token === 'RP' && $this->xls === false): ?>
 			<td style="padding: 3px 5px;">
-<?php if (empty($this->row['po_archivo']) === true && $this->row['anulado'] == 0): ?>
+<?php if (empty($this->row['po_archivo']) && $this->row['anulado'] == 0): ?>
 				<form action="upload-file.php" method="post" enctype="multipart/form-data" 
 					style="display: block; width: 300px;">
 					<input type="file" name="attached" style="cursor: pointer;">
@@ -657,7 +667,7 @@ $(document).ready(function(e) {
 					<input type="hidden" name="ide" value="<?=base64_encode($this->row['ide']);?>">
 					<input type="submit" value="Subir" style="cursor: pointer;">
 				</form>
-<?php elseif (empty($this->row['po_archivo']) === false): ?>
+<?php elseif (!empty($this->row['po_archivo'])): ?>
 				<a href="<?='files/' . $this->row['po_archivo'];?>" 
 					target="_blank" class="attached-link" style="width: 100px;">Ver Documentación</a>
 <?php endif ?>
@@ -754,6 +764,7 @@ $(document).ready(function(e) {
 		$swBG = FALSE;
 		$arr_state = array('txt' => '', 'action' => '', 'obs' => '', 'link' => '', 'bg' => '');
 		$bgCheck = '';
+
 		while($this->row = $this->rs->fetch_array(MYSQLI_ASSOC)){
 			$nCl = (int)$this->row['no_cl'];
 			if($swBG === FALSE){

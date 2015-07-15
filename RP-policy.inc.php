@@ -226,7 +226,7 @@ $(document).ready(function(e) {
       activeHeader: "ui-icon-circle-arrow-s"
     };
 	
-	$("#accordion" ).accordion({
+	$(".accordion" ).accordion({
 		collapsible: true,
 		icons: icons,
 		heightStyle: "content",
@@ -392,6 +392,11 @@ if($rsEx->data_seek(0) === TRUE){
             <input type="hidden" id="data-pr" name="data-pr" value="<?=base64_encode($rowMenu['producto']);?>" >
             <input type="hidden" id="pr" name="pr" value="<?=$rowMenu['producto'];?>">
             <br>
+			
+			<div class="mess-oc" style="text-align: right; font-size: 100%; font-weight: bold;">
+				<span class="days-process atch_py"></span>Póliza Adjuntada
+    			<span class="days-process atch_pn"></span>Póliza NO Adjuntada
+			</div>
 
             <div id="accordion" class="accordion">
             	<h5>Pre-Impresos</h5>

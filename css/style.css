@@ -2240,7 +2240,21 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dbdbdb', end
 	.taken__result .code-cl:hover {
 		text-decoration: underline;
 	}
-/* ===========================HEADER============================ */
+
+/* ===========================Poliza Atch======================= */
+.atch_py td, .atch_pn td {
+	color: #FFF;
+}
+
+.atch_py {
+	background: #18B745;
+}
+
+.atch_pn {
+	background: #F31D1D; 
+}
+
+
 /* ===========================HEADER============================ */
 /* ===========================FOOTER============================ */
 

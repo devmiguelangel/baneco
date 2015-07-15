@@ -519,13 +519,23 @@ $(document).ready(function(e) {
 		$bgCheck 	= '';
 		$arr_state 	= array('txt' => '', 'action' => '', 'obs' => '', 'link' => '', 'bg' => '');
 		$preprinted = array(1 => 'SI', 0 => 'NO');
+		$bg_row 	= '';
 
 		while($this->row = $this->rs->fetch_array(MYSQLI_ASSOC)){
 			$nCl = (int)$this->row['no_cl'];
-			if($swBG === FALSE){
-				$bg = 'background: #EEF9F8;';
-			}elseif($swBG === TRUE){
-				$bg = 'background: #D1EBSA;';
+			
+			if ($this->token === 'RP') {
+				if (empty($this->row['po_archivo'])) {
+					$bg_row = 'atch_pn';
+				} else {
+					$bg_row = 'atch_py';
+				}
+			} else {
+				if($swBG === FALSE){
+					$bg = 'background: #EEF9F8;';
+				}elseif($swBG === TRUE){
+					$bg = 'background: #D1EBSA;';
+				}
 			}
 
 			$rowSpan = FALSE;
@@ -606,7 +616,7 @@ $(document).ready(function(e) {
 							$rowSpan = '';
 						}
 ?>
-		<tr style=" <?=$bg;?> " class="row" rel="0"
+		<tr style=" <?=$bg;?> " class="row <?= $bg_row ;?>" rel="0"
 			data-nc="<?=base64_encode($this->row['ide']);?>"
 			data-token="<?=$this->dataToken;?>"
 			data-issue="<?=base64_encode(0);?>">
