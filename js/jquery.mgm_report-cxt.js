@@ -1,7 +1,7 @@
 // JavaScript Document
-(function($){
+(function($) {
 $.fn.extend({
-	reportCxt: function(options){
+	reportCxt: function(options) {
 		var optionsDefault = {
 			product: 'DE',
 			context: 'RF',
@@ -16,18 +16,18 @@ $.fn.extend({
 		$(this).hover(function(e) {
 			$("."+option.id).hide();
 			$(this).addClass('hover');
-		},function(){
+		},function() {
 			$(this).removeClass('hover');
 		});
 		
-		$(this).click(function(e){
-			if(e.target.nodeName !== 'A'){
+		$(this).click(function(e) {
+			if (e.target.nodeName !== 'A') {
 				var rel = parseInt($(this).attr('rel'));
 			
-				if(rel === 0){
+				if (rel === 0) {
 					$(this).addClass('active');
 					rel = 1;
-				}else if(rel === 1){
+				} else if (rel === 1) {
 					$(this).removeClass('active');
 					rel = 0;
 				}
@@ -39,28 +39,35 @@ $.fn.extend({
 		$(this).on('contextmenu', function (e) {
 			e.preventDefault();
 			
-			var token = parseInt($(this).attr('data-token'));
-			var ide = $(this).attr('data-nc');
-			var idd = '';
-			var idv = '';
-			var idp = '';
-			var idm = '';
-			var issue = $(this).attr('data-issue');
-			var quote = 0;
-			if($(this).hasClass('quote') === true) {
+			var token 		= parseInt($(this).attr('data-token'));
+			var ide 		= $(this).attr('data-nc');
+			var idd 		= '';
+			var idv 		= '';
+			var idp 		= '';
+			var idm 		= '';
+			var issue 		= $(this).attr('data-issue');
+			var quote 		= 0;
+			var statement 	= 0;
+
+			if ($(this).hasClass('quote') === true) {
 				quote = 1;
 			}
+			
 			var bc = parseInt($(this).attr('data-bc'));
 			if (bc === 1) {
 				idd = '&idd=' + $(this).attr('data-dd');
 			}
+
+			if (parseInt($(this).attr('data-st'))) {
+				statement = 1;
+			}
 			
 			var ms = '';	var page = '';
 			
-			if(token === 0){
+			if (token === 0) {
 				ms = $("#ms").prop('value');
 				page = $("#page").prop('value');
-			}else if(token === 1){
+			} else if (token === 1) {
 				
 			}
 			
@@ -81,9 +88,11 @@ $.fn.extend({
 			
 			
 			$("."+option.id).html('');
+
 			$.get('get-contextmenu.php', 'product=' + option.product + '&ide=' + ide 
 				+ idd + '&idv=' + idv + '&idp=' + idp + '&idm=' + idm + '&token=' + token 
-				+ '&ms=' + ms + '&page=' + page + '&quote=' + quote + '&issue=' + issue, function(data){
+				+ '&ms=' + ms + '&page=' + page + '&quote=' + quote + '&issue=' + issue 
+				+ '&statement=' + statement, function(data) {
 				$("."+option.id).css('background', '#FFFFFF');
 				$("."+option.id).html(data);
 			});

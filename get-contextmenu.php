@@ -14,26 +14,29 @@ $token = $session->check_session();
 if(isset($_GET['ide'])){
 	$link = new SibasDB();
 	
-	$product = $link->real_escape_string(trim($_GET['product']));
-	$pr = strtolower($product);
-	$ide = $link->real_escape_string(trim(base64_decode($_GET['ide']))); 
-	$idVh = $link->real_escape_string(trim(base64_decode($_GET['idv'])));
-	$idPr = $link->real_escape_string(trim(base64_decode($_GET['idp'])));
-	$idMt = $link->real_escape_string(trim(base64_decode($_GET['idm'])));
+	$product 	= $link->real_escape_string(trim($_GET['product']));
+	$pr 		= strtolower($product);
+	$ide 		= $link->real_escape_string(trim(base64_decode($_GET['ide']))); 
+	$idVh 		= $link->real_escape_string(trim(base64_decode($_GET['idv'])));
+	$idPr 		= $link->real_escape_string(trim(base64_decode($_GET['idp'])));
+	$idMt 		= $link->real_escape_string(trim(base64_decode($_GET['idm'])));
+	$statement	= (boolean)$link->real_escape_string(trim($_GET['statement']));
 	
-	$idc = '';
-	$token = (int)$link->real_escape_string(trim($_GET['token']));
-	$ms = $link->real_escape_string(trim($_GET['ms']));
-	$page = $link->real_escape_string(trim($_GET['page']));
-	$quote = (boolean)$link->real_escape_string(trim($_GET['quote']));
-	$issue = (boolean)$link->real_escape_string(trim(base64_decode($_GET['issue'])));
-	$bc = false;
-	$idd = '';
+	$idc 	= '';
+	$token 	= (int)$link->real_escape_string(trim($_GET['token']));
+	$ms 	= $link->real_escape_string(trim($_GET['ms']));
+	$page 	= $link->real_escape_string(trim($_GET['page']));
+	$quote 	= (boolean)$link->real_escape_string(trim($_GET['quote']));
+	$issue 	= (boolean)$link->real_escape_string(trim(base64_decode($_GET['issue'])));
+	$bc 	= false;
+	$idd 	= '';
 	$link_dd = '';
+
 	if (isset($_GET['idd'])) {
 		$bc = true;
 		$idd = $link->real_escape_string(trim(base64_decode($_GET['idd'])));
 	}
+
 	$arr_f = array();
 	$arr_p = array();
 	
@@ -332,9 +335,14 @@ if(isset($_GET['ide'])){
                        ) as estado,
 					'' as observacion,
 					'' as estado_facultativo,
-					sde.emitir
+					sde.emitir,
+					sc.id_cliente
 				from
 					s_ap_em_cabecera as sde
+						inner join
+					s_ap_em_detalle as sdd ON (sdd.id_emision = sde.id_emision)
+						inner join
+					s_cliente as sc ON (sc.id_cliente = sdd.id_cliente)
 						inner join
 					s_usuario as su ON (su.id_usuario = sde.id_usuario)
 				where
@@ -362,9 +370,14 @@ if(isset($_GET['ide'])){
                        ) as estado,
 					'' as observacion,
 					'' as estado_facultativo,
-					sde.emitir
+					sde.emitir,
+					sc.id_cliente
 				from
 					s_vi_em_cabecera as sde
+						inner join
+					s_vi_em_detalle as sdd ON (sdd.id_emision = sde.id_emision)
+						inner join
+					s_cliente as sc ON (sc.id_cliente = sdd.id_cliente)
 						inner join
 					s_usuario as su ON (su.id_usuario = sde.id_usuario)
 				where
@@ -375,7 +388,7 @@ if(isset($_GET['ide'])){
 		}
 		//echo $sql;
 		
-		if(($rs = $link->query($sql,MYSQLI_STORE_RESULT))){
+		if (($rs = $link->query($sql,MYSQLI_STORE_RESULT)) !== false) {
 			if($rs->num_rows === 1){
 				$row = $rs->fetch_array(MYSQLI_ASSOC);
 				$rs->free();
@@ -595,6 +608,13 @@ if(isset($_GET['ide'])){
 			}
 		}
 		
+		if ($statement) {
+			$menu .= '<li><a href="certificate-detail.php?ide=' . base64_encode($ide) 
+				. '&pr=' . base64_encode($product) . '&type=' . base64_encode('PRINT') 
+				. '&category=' . base64_encode('ST') . '&idcl=' . base64_encode($row['id_cliente']) . '" 
+					class="fancybox fancybox.ajax observation">Estado de Cuentas</a></li>';
+		}
+
 		if ($product !== 'DE' && (boolean)$row['pp'] === false) {
 			$menu .= '<li><a href="certificate-detail.php?idc=' . base64_encode($idc) 
 				. '&cia=' . base64_encode($row['id_compania']) . '&pr=' . base64_encode($product) 

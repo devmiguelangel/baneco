@@ -1,17 +1,34 @@
 <?php
+
 require_once('sibas-db.class.php');
 
 class ReportsGeneralVI{
-	private $cx, $sql, $rs, $row, $sqlcl, $rscl, $rowcl, $pr, $flag, $token,
-			$nEF, $dataToken, $xls, $xlsTitle;
+	private 
+		$cx, 
+		$sql, 
+		$rs, 
+		$row, 
+		$sqlcl, 
+		$rscl, 
+		$rowcl, 
+		$pr, 
+		$flag, 
+		$token, 
+		$nEF, 
+		$dataToken, 
+		$xls, 
+		$xlsTitle, 
+		$statement;
+
 	protected $data = array();
 	public $err;
 
 	public function ReportsGeneralVI($data, $pr, $flag, $xls){
-		$this->cx = new SibasDB();
-		$this->pr = $this->cx->real_escape_string(trim(base64_decode($pr)));
-		$this->flag = $this->cx->real_escape_string(trim($flag));
-		$this->xls = $xls;
+		$this->cx 		= new SibasDB();
+		$this->pr 		= $this->cx->real_escape_string(trim(base64_decode($pr)));
+		$this->flag 	= $this->cx->real_escape_string(trim($flag));
+		$this->xls 		= $xls;
+		$this->statement = 0;
 
 		$this->set_variable($data);
 		$this->get_query_report();
@@ -122,7 +139,10 @@ class ReportsGeneralVI{
 	private function set_query_de_report(){
 		switch($this->token){
 		case 'RG': $this->dataToken = 2; break;
-		case 'RP': $this->dataToken = 2; break;
+		case 'RP': 
+			$this->dataToken = 2;
+			$this->statement = 1;
+			break;
 		case 'PA': $this->dataToken = 3; break;
 		case 'AN': $this->dataToken = 4; break;
 		case 'IM': $this->dataToken = 5; break;
@@ -619,7 +639,8 @@ $(document).ready(function(e) {
 		<tr style=" <?=$bg;?> " class="row <?= $bg_row ;?>" rel="0"
 			data-nc="<?=base64_encode($this->row['ide']);?>"
 			data-token="<?=$this->dataToken;?>"
-			data-issue="<?=base64_encode(0);?>">
+			data-issue="<?=base64_encode(0);?>"
+			data-st="<?= $this->statement ;?>" >
         	<!-- <td <?=$rowSpan;?>><?=$this->row['r_prefijo'] . '-' . $this->row['r_no_emision'];?></td> -->
         	<td <?=$rowSpan;?>><?=$this->row['r_no_poliza'];?></td>
             <td <?=$rowSpan;?>><?=$this->row['ef_nombre'];?></td>

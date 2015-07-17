@@ -2666,7 +2666,7 @@ class CertificateQuery extends CertificateHtml {
 		    s_usuario AS su ON (su.id_usuario = sae.id_usuario)
 		        LEFT OUTER JOIN
 		    s_agencia AS sa ON (sa.id_agencia = su.id_agencia)
-		        INNER JOIN
+		        LEFT JOIN
 		    s_departamento AS sdep ON (sdep.id_depto = su.id_depto)
 		    	INNER JOIN
 		    s_plan AS spl ON (spl.id_plan = sae.id_plan)
@@ -2951,7 +2951,7 @@ class CertificateQuery extends CertificateHtml {
 		    s_usuario AS su ON (su.id_usuario = sve.id_usuario)
 		        LEFT JOIN
 		    s_agencia AS sa ON (sa.id_agencia = su.id_agencia)
-		        INNER JOIN
+		        LEFT JOIN
 		    s_departamento AS sdep ON (sdep.id_depto = su.id_depto)
 		    	INNER JOIN
 		    s_plan AS spl ON (spl.id_plan = sve.id_plan)
