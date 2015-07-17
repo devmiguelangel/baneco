@@ -334,7 +334,7 @@ while($row = $rs->fetch_array(MYSQLI_ASSOC)){
 
 		if ((boolean)$row['pre_impreso'] === true) {
 			$pp_check = 'checked';
-			$no_poliza = $row['no_preprinted'];
+			$no_preprinted = $row['no_preprinted'];
 		}
 
 		$bill_name = $row['factura_nombre'];
