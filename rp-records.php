@@ -173,7 +173,9 @@ if(isset($_GET['data-pr']) && isset($_GET['flag'])){
 
 	$arrData['r-mora'] = '';
 	if(isset($_GET['frp-mora'])) { $arrData['r-mora'] = $_GET['frp-mora']; }
-	//echo $arrData['r-canceled'];
+	
+	$arrData['r-expiration'] = '';
+	if(isset($_GET['frp-expiration'])) { $arrData['r-expiration'] = $_GET['frp-expiration']; }
 	
 	$arrData['r-preprinted'] = '';
 	if(isset($_GET['frp-preprinted'])) { $arrData['r-preprinted'] = $_GET['frp-preprinted']; }

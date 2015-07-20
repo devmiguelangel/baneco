@@ -107,6 +107,13 @@ class SibasDB extends MySQLi
 			3 => array(61, 90),
 			4 => array(90, 1000000000),
 		),
+		$days_expiration = array(
+			1 => array(0, 15),
+			2 => array(16, 30),
+			3 => array(31, 60),
+			4 => array(61, 90),
+			5 => array(91, 120),
+		),
 		$depto_be = array(
 			10 => 'SC',
 			20 => 'LP',

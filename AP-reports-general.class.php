@@ -65,6 +65,7 @@ class ReportsGeneralAP{
 		// $this->data['r-clientbs'] = $this->cx->real_escape_string(trim($data['r-clientbs']));
 		$this->data['r-state-account'] = $this->cx->real_escape_string(trim($data['r-state-account']));
 		$this->data['r-mora'] = $this->cx->real_escape_string(trim($data['r-mora']));
+		$this->data['expiration'] = $this->cx->real_escape_string(trim($data['r-expiration']));
 		$this->data['preprinted'] = $this->cx->real_escape_string(trim($data['r-preprinted']));
 		$this->data['no_preprinted'] = $this->cx->real_escape_string(trim($data['r-no_preprinted']));
 		if ((int)$this->data['preprinted'] !== 1) {
@@ -118,6 +119,9 @@ class ReportsGeneralAP{
 		case md5('RC'):
 			$this->token = 'RC';
 			$this->xlsTitle = 'Accidentes Personales - Reporte Cobranzas'; break;
+		case md5('RE'):
+			$this->token = 'RE';
+			$this->xlsTitle = 'Accidentes Personales - Reporte de Vencimiento de Polizas'; break;
 		}
 
 		if($this->token === 'RG' ||
@@ -127,7 +131,8 @@ class ReportsGeneralAP{
 			$this->token === 'IM' ||
 			$this->token === 'AP' ||
 			$this->token === 'UF' ||
-			$this->token === 'RC'){
+			$this->token === 'RC' ||
+			$this->token === 'RE'){
 
 			$this->set_query_de_report();
 		}elseif($this->token === 'RQ' || $this->token === 'IQ'){
@@ -149,6 +154,7 @@ class ReportsGeneralAP{
 		case 'AP': $this->dataToken = 2; break;
 		case 'UF': $this->dataToken = 4; break;
 		case 'RC': $this->dataToken = 2; break;
+		case 'RE': $this->dataToken = 2; break;
 		}
 
 		$this->sql = "select
@@ -228,7 +234,10 @@ class ReportsGeneralAP{
 				when 'Y' then 'Anual'
 				when 'M' then 'Mensual'
 			end) as periodo,
-			sde.po_archivo
+			sde.po_archivo,
+			DATEDIFF(DATE_ADD(sde.fecha_emision,
+                INTERVAL 1 YEAR),
+            CURDATE()) AS dias_expiracion
 		from
 			s_ap_em_cabecera as sde
 				inner join
@@ -343,10 +352,23 @@ class ReportsGeneralAP{
 						''
 				end) regexp '" . $this->data['r-state-account'] . "'
 			";
-			if (empty($this->data['r-mora']) === false && $this->token === 'RC') {
+
+			if (!empty($this->data['r-mora'])) {
 				$this->sql .= "and datediff(curdate(), sac.fecha_cuota) 
 					between " . $this->cx->days_mora[$this->data['r-mora']][0] . " 
 						and " . $this->cx->days_mora[$this->data['r-mora']][1] . " 
+				";
+			}
+		} elseif ($this->token === 'RE') {
+			$this->sql .= "and sde.emitir = true
+				and sde.anulado = false
+			";
+
+			if (!empty($this->data['expiration'])) {
+				$this->sql .= "and DATEDIFF(DATE_ADD(sde.fecha_emision,
+		                	INTERVAL 1 YEAR), CURDATE()) 
+						between " . $this->cx->days_expiration[$this->data['expiration']][0] . " 
+						and " . $this->cx->days_expiration[$this->data['expiration']][1] . " 
 				";
 			}
 		}
@@ -470,7 +492,8 @@ class ReportsGeneralAP{
 			$this->token === 'IM' ||
 			$this->token === 'AP' ||
 			$this->token === 'UF' ||
-			$this->token === 'RC'){
+			$this->token === 'RC' ||
+			$this->token === 'RE'){
 
 			$this->set_result_de();
 		}elseif($this->token === 'RQ' || $this->token === 'IQ'){
@@ -531,6 +554,9 @@ $(document).ready(function(e) {
             <!--<td>Días de Ultima Modificación</td>-->
 <?php if ($this->token === 'RP' && $this->xls === false): ?>
 			<td>Adjuntar Archivo</td>
+<?php endif ?>
+<?php if ($this->token === 'RE'): ?>
+			<td><?=htmlentities('Días vencimiento de Póliza');?></td>
 <?php endif ?>
         </tr>
     </thead>
@@ -694,6 +720,9 @@ $(document).ready(function(e) {
 <?php endif ?>
 			</td>
 <?php endif ?>
+<?php if ($this->token === 'RE'): ?>
+			<td><?= $this->row['dias_expiracion'] ;?></td>
+<?php endif ?>
         </tr>
 <?php
 					}
@@ -732,7 +761,8 @@ $(document).ready(function(e) {
 					$this->data['r-issued'];?>&frp-rejected=<?=
 					$this->data['r-rejected'];?>&frp-canceled=<?=
 					$this->data['r-canceled'];?>&frp-state-account=<?=
-					$this->data['r-state-account'];?>&frp-mora=<?=$this->data['r-mora'];?>"
+					$this->data['r-state-account'];?>&frp-mora=<?=
+					$this->data['r-mora'];?>&frp-expiration=<?=$this->data['expiration'];?>"
 					class="send-xls" target="_blank">
 					Exportar a Formato Excel
 				</a>
