@@ -289,18 +289,6 @@ if (($rsMenu = $link->get_product_menu($_SESSION['idEF'])) !== FALSE) {
 ?>
 	<div class="rp-pr-container" id="rp-tab-<?=$k;?>" style=" <?=$display;?> ">
     	<form class="f-reports">
-        	<!--<label>N° de Póliza: </label>
-            <select id="frp-policy" name="frp-policy">
-                <option value="">Seleccione...</option>
-<?php
-if (($rsPo = $link->get_policy($_SESSION['idEF'], $rowMenu['producto'])) !== FALSE) {
-	while($rowPo = $rsPo->fetch_array(MYSQLI_ASSOC)){
-		echo '<option value="'.base64_encode($rowPo['id_poliza']).'">'.$rowPo['no_poliza'].'</option>';
-	}
-}
-?>
-            </select>-->
-            
             <label>N° de Póliza: </label>
 <?php
 			if ($rowMenu['producto'] === 'DE') {
@@ -381,10 +369,10 @@ if($rsEx->data_seek(0) === TRUE){
             
             <label style="">Fecha: </label>
             <label style="width:auto;">desde: </label>
-            <input type="text" id="frp-date-b" name="frp-date-b" value="" autocomplete="off" class="date" readonly>
+            <input type="text" id="frp-date-b-<?= strtolower($rowMenu['producto']) ;?>" name="frp-date-b" value="" autocomplete="off" class="date" readonly>
             
             <label style="width:auto;">hasta: </label>
-            <input type="text" id="frp-date-e" name="frp-date-e" value="" autocomplete="off" class="date" readonly><br>
+            <input type="text" id="frp-date-e-<?= strtolower($rowMenu['producto']) ;?>" name="frp-date-e" value="" autocomplete="off" class="date" readonly><br>
             
             <input type="hidden" id="frp-id-user" name="frp-id-user" value="<?=$_SESSION['idUser'];?>">
             <input type="hidden" id="ms" name="ms" value="<?=$_GET['ms'];?>">
