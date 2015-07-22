@@ -7,7 +7,7 @@ header("Pragma: no-cache");
 
 require('classes/certificate-sibas.class.php');
 if ((isset($_GET['ide']) || isset($_GET['idc'])) && isset($_GET['type']) && isset($_GET['pr'])) {
-	$category = $ide = $idc = $idcia = $extra = NULL;
+	$category = $ide = $idc = $idcia = $extra = $idcl = NULL;
 	$popup = false;
 
 	if (isset($_GET['popup'])) {
@@ -36,10 +36,14 @@ if ((isset($_GET['ide']) || isset($_GET['idc'])) && isset($_GET['type']) && isse
 		$extra = base64_decode($_GET['pe']);
 	}
 	
+	if($category==='ST'){
+	   $idcl = base64_decode($_GET['idcl']);	
+	}
+	
 	$type = base64_decode($_GET['type']);
 	$product = base64_decode($_GET['pr']);
 	
-	$cs = new CertificateSibas($ide, $idc, $idcia, $product, $type, $category, 1, 0, FALSE);
+	$cs = new CertificateSibas($ide, $idc, $idcia, $product, $type, $category, $idcl, 1, 0, FALSE);
 	if (isset($_GET['emails'])) {
 		$vec = array();
 		$arr_emails = array();

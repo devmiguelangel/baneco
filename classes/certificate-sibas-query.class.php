@@ -22,6 +22,9 @@ class CertificateQuery extends CertificateHtml {
 		case 'PEC':		//	Certificado Producto Extra
 			$this->get_query_pec();
 			break;
+		case 'ST':  //Emision de Estados de Cuentas
+		   $this->get_query_st();
+		   break;	
 		}
 		
 		if ($this->error === FALSE) {
@@ -137,6 +140,18 @@ class CertificateQuery extends CertificateHtml {
 		case 'DE':
 			$this->set_query_de_em_pec();
 			 break;
+		}
+	}
+	
+	//CERTIFICADO DE ESTADOS DE CUENTAS
+	private function get_query_st(){
+		switch ($this->product){
+		  case 'AP':
+		     $this->set_query_ap_st();
+			 break;
+		  case 'VI':
+		     $this->set_query_vi_st();
+			 break;	 	
 		}
 	}
 	
@@ -1126,9 +1141,7 @@ class CertificateQuery extends CertificateHtml {
 			} else { $this->error = true; }
 		} else { $this->error = true; }
 	}
-	
-	
-	
+		
 	//CERTIFICADO SLIP AUTOMOTORES
 	private function set_query_au_sc (){
 	    $this->sqlPo = "select 
@@ -2496,7 +2509,7 @@ class CertificateQuery extends CertificateHtml {
 		} else { $this->error = TRUE; }
 	}
 
-	private function set_query_ap_sc(){		//ACCIDENTES PERSONALES
+	private function set_query_ap_sc(){		//ACCIDENTES PERSONALES SLIP COTIZACION
 	  $this->sqlPo="select
             scc.id_cotizacion,
             scc.id_ef as idef,
@@ -2628,7 +2641,7 @@ class CertificateQuery extends CertificateHtml {
 
 	}
 
-	private function set_query_ap_em(){		//ACCIDENTES PERSONALES
+	private function set_query_ap_em(){		//ACCIDENTES PERSONALES EMISION
 	  	$this->sqlPo = 'SELECT 
 		    sae.id_emision AS id_emision,
 		    sef.id_ef AS idef,
@@ -2783,7 +2796,7 @@ class CertificateQuery extends CertificateHtml {
        	}
    	}
 
-	private function set_query_vi_sc(){		//VIDA INDIVIDUAL
+	private function set_query_vi_sc(){		//VIDA INDIVIDUAL SLIP COTIZACION
 		$this->sqlPo="select
             scc.id_cotizacion,
             scc.id_ef as idef,
@@ -2914,7 +2927,7 @@ class CertificateQuery extends CertificateHtml {
 
 	}
 
-	private function set_query_vi_em(){		//VIDA INDIVIDUAL
+	private function set_query_vi_em(){		//VIDA INDIVIDUAL EMISION
 		$this->sqlPo = "SELECT 
 		    sve.id_emision AS id_emision,
 		    sef.id_ef as idef,
@@ -3063,6 +3076,121 @@ class CertificateQuery extends CertificateHtml {
 	   		$this->error = TRUE;
 	   	}
    	}
+	
+	private function set_query_ap_st(){ //ACCIDENTES PERSONALES ESTADO CUENTAS
+		$this->sqlPo = 'SELECT 
+				sae.id_emision,
+				sef.id_ef as idef,
+				saed.id_cliente,
+				sae.prefijo,
+				sae.no_emision,
+				sae.no_poliza,
+				sae.forma_pago,
+				sae.periodo,
+				sae.fecha_emision,
+				date_format(sae.fecha_emision, "%Y") as anio_emision,
+				sa.agencia AS agencia,
+				sdep.departamento AS u_departamento,
+				sdep.codigo as depto_codigo,
+				sae.fecha_emision,
+				su.nombre as u_nombre,
+				su.email as u_email,
+				scl.paterno as cl_paterno,
+				scl.materno as cl_materno,
+				scl.nombre as cl_nombre,
+				scl.ap_casada as cl_apcasada,
+				scl.direccion as cl_direccion,
+				scl.no_domicilio as cl_no_domicilio,
+				scl.telefono_domicilio as cl_fono,
+				scl.telefono_celular as cl_celular
+			FROM
+				s_ap_em_cabecera AS sae
+					inner join
+				s_ap_em_detalle as saed ON (saed.id_emision = sae.id_emision)
+					inner join
+				s_cliente as scl ON (scl.id_cliente = saed.id_cliente)
+					INNER JOIN
+				s_entidad_financiera AS sef ON (sef.id_ef = sae.id_ef)
+					INNER JOIN
+				s_compania AS scia ON (scia.id_compania = sae.id_compania)
+					INNER JOIN
+				s_usuario AS su ON (su.id_usuario = sae.id_usuario)
+					LEFT OUTER JOIN
+				s_agencia AS sa ON (sa.id_agencia = su.id_agencia)
+					LEFT JOIN
+				s_departamento AS sdep ON (sdep.id_depto = su.id_depto)
+			WHERE
+				saed.id_cliente = "'.$this->idcl.'"
+					and sae.emitir = true
+					and sae.anulado = false;';
+		//echo $this->sqlPo;	
+		if($this->rsPo = $this->cx->query($this->sqlPo,MYSQLI_STORE_RESULT)){
+		   if($this->rsPo->num_rows>0){
+			   $this->rowPo = $this->rsPo->fetch_array(MYSQLI_ASSOC);
+			   $this->error = FALSE;
+		   }else{
+			 $this->error = TRUE;   
+		   }	
+		}else{
+		   $this->error = TRUE;
+		}	
+	}
+	
+	private function set_query_vi_st(){ //VIDA INDIVIDUAL ESTADO DE CUENTAS
+		$this->sqlPo="SELECT 
+				sve.id_emision,
+				sef.id_ef as idef,
+				svd.id_cliente,
+				sve.no_emision,
+				sve.no_poliza,
+				sa.agencia AS agencia,
+				sdep.departamento AS user_departamento,
+				sdep.codigo as depto_codigo,
+				sve.fecha_emision,
+				date_format(sve.fecha_emision, '%Y') as anio_emision,
+				sve.forma_pago,
+				sve.periodo,
+				su.nombre as u_nombre,
+				su.email as u_email,
+				scl.paterno as cl_paterno,
+				scl.materno as cl_materno,
+				scl.nombre as cl_nombre,
+				scl.ap_casada as cl_apcasada,
+				scl.direccion as cl_direccion,
+				scl.no_domicilio as cl_no_domicilio,
+				scl.telefono_domicilio as cl_fono,
+				scl.telefono_celular as cl_celular
+			FROM
+				s_vi_em_cabecera AS sve
+					inner join
+				s_vi_em_detalle as svd on (svd.id_emision = sve.id_emision)
+					inner join
+				s_cliente as scl on (scl.id_cliente = svd.id_cliente)
+					LEFT JOIN
+				s_entidad_financiera AS sef ON (sef.id_ef = sve.id_ef)
+					INNER JOIN
+				s_compania AS scia ON (scia.id_compania = sve.id_compania)
+					INNER JOIN
+				s_usuario AS su ON (su.id_usuario = sve.id_usuario)
+					LEFT JOIN
+				s_agencia AS sa ON (sa.id_agencia = su.id_agencia)
+					LEFT JOIN
+				s_departamento AS sdep ON (sdep.id_depto = su.id_depto)
+					
+			WHERE
+				svd.id_cliente = '".$this->idcl."';";
+		//echo $this->sqlPo;	  
+		if($this->rsPo = $this->cx->query($this->sqlPo, MYSQLI_STORE_RESULT)){
+		   if($this->rsPo->num_rows > 0){
+			  $this->rowPo = $this->rsPo->fetch_array(MYSQLI_ASSOC); 
+			  $this->error = FALSE;
+		   }else{
+			  $this->error = TRUE;  
+		   }	
+		}else{
+		   $this->error = TRUE;	
+		}	  
+	}
 	
 	private function set_query_trm_em_mo () {
 		$this->set_query_trm_em();

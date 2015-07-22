@@ -11,7 +11,7 @@ class CertificateSibas extends CertificateQuery{
 	public $host = NULL, $address = NULL, $mod = NULL;
 	
 	public function __construct($ide, $idc, $idcia, $product, $type, 
-		$category, $page, $nCopy, $implant, $fac = FALSE, $reason = '') {
+		$category, $idcl, $page, $nCopy, $implant, $fac = FALSE, $reason = '') {
 			
 		$this->error = true;
 		$this->formatPdf = 'Legal';
@@ -24,6 +24,7 @@ class CertificateSibas extends CertificateQuery{
 		$this->product = $this->cx->real_escape_string(trim($product));
 		$this->type = $this->cx->real_escape_string(trim($type));
 		$this->category = $this->cx->real_escape_string(trim($category));
+		$this->idcl = $this->cx->real_escape_string(trim($idcl));
 		$this->page = $this->cx->real_escape_string(trim($page));
 		$this->nCopy = $this->cx->real_escape_string(trim($nCopy));
 		$this->implant = (boolean)$this->cx->real_escape_string(trim($implant));
@@ -174,6 +175,14 @@ class CertificateSibas extends CertificateQuery{
 					case 'DE':
 						$this->subject = 'Certificado Producto extra Desgravamen No. '.$this->rowPo['no_emision'];
 						break;
+					}
+				} elseif($this->category === 'ST'){
+					$this->formatPdf = 'Letter';
+					switch ($this->product){
+					   case 'AP':
+					      $this->subject = 'Emision de Estados de Cuentas';	
+					   case 'VI':
+					      $this->subject = 'Emision de Estados de Cuentas';	  
 					}
 				}
 			}
@@ -677,11 +686,20 @@ function confirmExit(){
 			. base64_encode($this->category).$this->linkExtra . '" 
 			target="_blank" title="Exportar a PDF" class="link-cert">';
 	} else {
-		echo '<a href="' . $this->url . 'certificate-detail.php?ide=' 
-			. base64_encode($this->rowPo['id_emision']) . '&type=' 
-			. base64_encode('PDF') . '&pr=' . base64_encode($this->product) 
-			. '&category=' . base64_encode($this->category) . '" 
-			target="_blank" title="Exportar a PDF" class="link-cert">';
+		if($this->category === 'ST'){
+			echo '<a href="' . $this->url . 'certificate-detail.php?ide=' 
+				. base64_encode($this->ide) . '&type=' 
+				. base64_encode('PDF') . '&pr=' . base64_encode($this->product) 
+				. '&category=' . base64_encode($this->category) . '&idcl='
+				. base64_encode($this->idcl) .'" 
+				target="_blank" title="Exportar a PDF" class="link-cert">';
+		}else{
+			echo '<a href="' . $this->url . 'certificate-detail.php?ide=' 
+				. base64_encode($this->rowPo['id_emision']) . '&type=' 
+				. base64_encode('PDF') . '&pr=' . base64_encode($this->product) 
+				. '&category=' . base64_encode($this->category) . '" 
+				target="_blank" title="Exportar a PDF" class="link-cert">';
+		}
 	}
 ?>  
 	<img src="img/icon-pdf-01.png" width="50" height="50" alt="Exportar a PDF" />

@@ -41,6 +41,11 @@ require('includes-ce/certificate-VI-SC.inc.php');
 require('includes-ce/certificate-AP-EM.inc.php');
 require('includes-ce/certificate-AP-SC.inc.php');
 
+require('includes-ce/certificate-AP-ST.inc.php');
+require('includes-ce/certificate-VI-ST.inc.php');
+
+
+
 /**
  * 
  */
@@ -59,7 +64,7 @@ class CertificateHtml{
 		if (($this->host_ws = $this->cx->getNameHostEF(base64_encode($this->rowPo['idef']))) !== false) {
 			$this->host_ws .= '.';
 		}
-		
+				
 		if (strpos($self, 'localhost') !== false || filter_var($self, FILTER_VALIDATE_IP) !== false) {
 			$this->url .= trim($this->host_ws, '.') . '/';
 		} elseif (strpos($self, $this->host_ws . 'abrenet.com') === false){
@@ -88,6 +93,9 @@ class CertificateHtml{
 		case 'PEC':		//	Slip de Cotización
 			$this->html = $this->get_html_pec();
 			break;
+		case 'ST':
+		    $this->html = $this->get_html_st();
+			break;	
 		}
 	}
 	
@@ -175,6 +183,18 @@ class CertificateHtml{
 		case 'TRM':
 			return $this->set_html_trm_cp();
 			break;
+		}	
+	}
+	
+	//CERTIFICADOS ESTADO DE CUENTAS
+	private function get_html_st(){
+	    switch ($this->product){
+			case 'AP':
+			    return $this->set_html_ap_st();
+			    break;
+			case 'VI':
+			    return $this->set_html_vi_st();
+				break;							
 		}	
 	}
 	
@@ -343,6 +363,14 @@ class CertificateHtml{
 	private function set_html_de_em_pec() {	//	Desgravamen
 		return de_em_pec_certificate($this->cx, $this->rowPo, $this->rsDt, $this->url, 
 								$this->implant, $this->fac, $this->reason);
+	}
+	
+	//CERTIFICADOS ESTADO DE CUENTAS
+	private function set_html_ap_st(){ //ACCIDENTES PERSONALES	
+		return ap_st_certificate($this->cx, $this->rsPo, $this->ide, $this->url);
+	}
+	private function set_html_vi_st(){
+	    return vi_st_certificate($this->cx, $this->rsPo, $this->ide, $this->url); 	
 	}
 	
 }
