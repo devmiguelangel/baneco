@@ -48,6 +48,7 @@ $.fn.extend({
 			var issue 		= $(this).attr('data-issue');
 			var quote 		= 0;
 			var statement 	= 0;
+			var renewal		= '';
 
 			if ($(this).hasClass('quote') === true) {
 				quote = 1;
@@ -61,6 +62,8 @@ $.fn.extend({
 			if (parseInt($(this).attr('data-st'))) {
 				statement = 1;
 			}
+
+			renewal = $(this).attr('data-rn');
 			
 			var ms = '';	var page = '';
 			
@@ -92,7 +95,7 @@ $.fn.extend({
 			$.get('get-contextmenu.php', 'product=' + option.product + '&ide=' + ide 
 				+ idd + '&idv=' + idv + '&idp=' + idp + '&idm=' + idm + '&token=' + token 
 				+ '&ms=' + ms + '&page=' + page + '&quote=' + quote + '&issue=' + issue 
-				+ '&statement=' + statement, function(data) {
+				+ '&statement=' + statement + '&renewal=' + renewal, function(data) {
 				$("."+option.id).css('background', '#FFFFFF');
 				$("."+option.id).html(data);
 			});

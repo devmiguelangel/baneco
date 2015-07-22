@@ -1,12 +1,14 @@
 <?php
+
 header("Expires: Thu, 27 Mar 1980 23:59:00 GMT");
 header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
 header("Cache-Control: no-store, no-cache, must-revalidate");
 header("Cache-Control: post-check=0, pre-check=0", false);
 header("Pragma: no-cache");
 
-require('sibas-db.class.php');
-require('session.class.php');
+require 'sibas-db.class.php';
+require 'session.class.php';
+
 $session = new Session();
 $session->getSessionCookie();
 $token = $session->check_session();
@@ -21,6 +23,7 @@ if(isset($_GET['ide'])){
 	$idPr 		= $link->real_escape_string(trim(base64_decode($_GET['idp'])));
 	$idMt 		= $link->real_escape_string(trim(base64_decode($_GET['idm'])));
 	$statement	= (boolean)$link->real_escape_string(trim($_GET['statement']));
+	$renewal	= (int)$link->real_escape_string(trim(base64_decode($_GET['renewal'])));
 	
 	$idc 	= '';
 	$token 	= (int)$link->real_escape_string(trim($_GET['token']));
@@ -31,6 +34,14 @@ if(isset($_GET['ide'])){
 	$bc 	= false;
 	$idd 	= '';
 	$link_dd = '';
+	$renovate = false;
+	
+	$max_day_expiration = array_pop($link->days_expiration);
+	$max_day_expiration = array_pop($max_day_expiration);
+
+	if ($renewal <= $max_day_expiration) {
+		$renovate = true;
+	}
 
 	if (isset($_GET['idd'])) {
 		$bc = true;
@@ -613,6 +624,12 @@ if(isset($_GET['ide'])){
 				. '&pr=' . base64_encode($product) . '&type=' . base64_encode('PRINT') 
 				. '&category=' . base64_encode('ST') . '&idcl=' . base64_encode($row['id_cliente']) . '" 
 					class="fancybox fancybox.ajax observation">Estado de Cuentas</a></li>';
+		}
+
+		if ($renovate) {
+			$menu .= '<li><a href="renovate.php?ide=' . base64_encode($ide) 
+				. '&pr=' . base64_encode($product) . '" 
+					class="fancybox fancybox.ajax observation">Renovar Póliza</a></li>';
 		}
 
 		if ($product !== 'DE' && (boolean)$row['pp'] === false) {

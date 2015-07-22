@@ -662,12 +662,17 @@ $(document).ready(function(e) {
 						if($this->xls === TRUE) {
 							$rowSpan = '';
 						}
+
+						if ($this->token !== 'RE') {
+							$this->row['dias_expiracion'] = -1;
+						}
 ?>
 		<tr style=" <?=$bg;?> " class="row <?= $bg_row ;?>" rel="0"
 			data-nc="<?=base64_encode($this->row['ide']);?>"
 			data-token="<?=$this->dataToken;?>"
 			data-issue="<?=base64_encode(0);?>"
-			data-st="<?= $this->statement ;?>" >
+			data-st="<?= $this->statement ;?>"
+			data-rn="<?= base64_encode($this->row['dias_expiracion']) ;?>" >
         	<!-- <td <?=$rowSpan;?>><?=$this->row['r_prefijo'] . '-' . $this->row['r_no_emision'];?></td> -->
 			<td <?=$rowSpan;?>><?=$this->row['r_no_poliza'];?></td>
             <td <?=$rowSpan;?>><?=$this->row['ef_nombre'];?></td>
