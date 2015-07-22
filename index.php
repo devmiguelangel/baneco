@@ -328,6 +328,9 @@ if($token === TRUE){
 		case md5('P_expiration'):
 			require 'RP-expiration.inc.php';
 			break;
+		case md5('P_liquidation'):
+			require 'RP-liquidation.inc.php';
+			break;
 		default:
 			echo '<meta http-equiv="refresh" content="0;url=index.php" >';
 			break;

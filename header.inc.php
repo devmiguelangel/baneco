@@ -422,6 +422,10 @@ if (($rsMenu = $link->get_product_menu($_SESSION['idEF'])) !== FALSE) {
 				<li><a href="index.php?ms=<?=md5('MS_REP');?>&page=<?=md5('P_expiration');?>">Reporte de Vencimiento de Pólizas</a></li>
 				<li><a href="index.php?ms=<?=md5('MS_REP');?>&page=<?=md5('P_graph');?>">Reporte Gráfico</a></li>
 			<?php endif ?>
+			
+			<?php if ($user_type === 'REP'): ?>
+				<li><a href="index.php?ms=<?=md5('MS_REP');?>&page=<?=md5('P_liquidation');?>">Reporte de Liquidación</a></li>
+			<?php endif ?>
 		</ul>
     </li>
     	<?php endif ?>

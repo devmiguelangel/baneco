@@ -122,6 +122,9 @@ class ReportsGeneralAP{
 		case md5('RE'):
 			$this->token = 'RE';
 			$this->xlsTitle = 'Accidentes Personales - Reporte de Vencimiento de Polizas'; break;
+		case md5('RL'):
+			$this->token = 'RL';
+			$this->xlsTitle = 'Accidentes Personales - Reporte de Liquidación'; break;
 		}
 
 		if($this->token === 'RG' ||
@@ -132,7 +135,8 @@ class ReportsGeneralAP{
 			$this->token === 'AP' ||
 			$this->token === 'UF' ||
 			$this->token === 'RC' ||
-			$this->token === 'RE'){
+			$this->token === 'RE' ||
+			$this->token === 'RL'){
 
 			$this->set_query_de_report();
 		}elseif($this->token === 'RQ' || $this->token === 'IQ'){
@@ -155,32 +159,53 @@ class ReportsGeneralAP{
 		case 'UF': $this->dataToken = 4; break;
 		case 'RC': $this->dataToken = 2; break;
 		case 'RE': $this->dataToken = 2; break;
+		case 'RL': $this->dataToken = 2; break;
 		}
 
 		$this->sql = "select
 			sde.id_emision as ide, ";
-		if ($this->token === 'RC') {
+		if ($this->token === 'RC' || $this->token === 'RL') {
 			$this->sql .= "1 as no_cl,
 			sac.numero_cuota,
-			date_format(sac.fecha_cuota, '%d/%m/%Y') as fecha_cuota,
-			if(sac.fecha_transaccion = '0000-00-00', 
-				'', 
-				date_format(sac.fecha_transaccion, '%d/%m/%Y')) as fecha_transaccion,
-			if(datediff(curdate(), sac.fecha_cuota) > 0 
-					and sac.fecha_transaccion = '0000-00-00', 
-				datediff(curdate(), sac.fecha_cuota), 0) as dias_mora,
-			(case
-				when sac.fecha_transaccion != '0000-00-00'
-					then 'P'
-				when datediff(curdate(), sac.fecha_cuota) < 0
-					then 'V'
-				when datediff(curdate(), sac.fecha_cuota) > 90
-					then 'N'
-				when datediff(curdate(), sac.fecha_cuota) >= 0
-					then 'M'
-				else
-					''
-			end) as estado_cuenta, ";
+			sac.fecha_transaccion,
+			sac.numero_transaccion,
+			sac.monto_transaccion,
+			sac.cobrado, ";
+
+			if ($this->token === 'RC') {
+				$this->sql .= "date_format(sac.fecha_cuota, '%d/%m/%Y') as fecha_cuota,
+				if(sac.fecha_transaccion = '0000-00-00', 
+					'', 
+					date_format(sac.fecha_transaccion, '%d/%m/%Y')) as fecha_transaccion,
+				if(datediff(curdate(), sac.fecha_cuota) > 0 
+						and sac.fecha_transaccion = '0000-00-00', 
+					datediff(curdate(), sac.fecha_cuota), 0) as dias_mora,
+				(case
+					when sac.fecha_transaccion != '0000-00-00'
+						then 'P'
+					when datediff(curdate(), sac.fecha_cuota) < 0
+						then 'V'
+					when datediff(curdate(), sac.fecha_cuota) > 90
+						then 'N'
+					when datediff(curdate(), sac.fecha_cuota) >= 0
+						then 'M'
+					else
+						''
+				end) as estado_cuenta, ";
+			}
+
+			if ($this->token === 'RL') {
+				$this->sql .= " sp.plan,
+				sp.nombre as plan_nombre,
+				if(sde.anulado = true, 
+					0,
+					if(sde.periodo = 'Y',
+						(sac.monto_transaccion / 12), 
+						if(sac.numero_cuota = 1, 
+							sac.monto_transaccion, 
+							0))) as comision, 
+				";
+			}
 		} else {
 			$this->sql .= "count(sc.id_cliente) as no_cl, ";
 		}
@@ -237,16 +262,23 @@ class ReportsGeneralAP{
 			sde.po_archivo,
 			DATEDIFF(DATE_ADD(sde.fecha_emision,
                 INTERVAL 1 YEAR),
-            CURDATE()) AS dias_expiracion
+            CURDATE()) AS dias_expiracion,
+			sde.fecha_emision as inicio_vigencia,
+			DATE_ADD(sde.fecha_emision, INTERVAL 1 YEAR) as fin_vigencia,
+			sdd.cuenta_1 as numero_cuenta
 		from
 			s_ap_em_cabecera as sde
 				inner join
 			s_ap_em_detalle as sdd ON (sdd.id_emision = sde.id_emision)
 				inner join
 			s_cliente as sc ON (sc.id_cliente = sdd.id_cliente) ";
-		if ($this->token === 'RC') {
+		if ($this->token === 'RC' || $this->token === 'RL') {
 			$this->sql .= "inner join
 			s_ap_cobranza as sac ON (sac.id_emision = sde.id_emision) ";
+			if ($this->token === 'RL') {
+				$this->sql .= "inner join
+				s_plan as sp ON (sp.id_plan = sde.id_plan) ";
+			}
 		}
 		$this->sql .= "
 				inner join
@@ -371,6 +403,11 @@ class ReportsGeneralAP{
 						and " . $this->cx->days_expiration[$this->data['expiration']][1] . " 
 				";
 			}
+		} elseif ($this->token === 'RL') {
+			$this->sql .= "and sde.emitir = true
+				and sde.anulado = false
+				and sac.cobrado = true
+			";
 		}
 
 		if ($this->token !== 'RC') {
@@ -493,7 +530,8 @@ class ReportsGeneralAP{
 			$this->token === 'AP' ||
 			$this->token === 'UF' ||
 			$this->token === 'RC' ||
-			$this->token === 'RE'){
+			$this->token === 'RE' ||
+			$this->token === 'RL'){
 
 			$this->set_result_de();
 		}elseif($this->token === 'RQ' || $this->token === 'IQ'){
@@ -557,6 +595,21 @@ $(document).ready(function(e) {
 <?php endif ?>
 <?php if ($this->token === 'RE'): ?>
 			<td><?=htmlentities('Días vencimiento de Póliza');?></td>
+<?php endif ?>
+<?php if ($this->token === 'RL'): ?>
+            <td><?=htmlentities('Número de Cuenta');?></td>
+            <td><?=htmlentities('Número de Transacción');?></td>
+            <td>Capital Asegurado</td>
+            <td>Monto de Prima Recaudada</td>
+            <td><?=htmlentities('Número de Cuota');?></td>
+            <td><?=htmlentities('Fecha de Transacción');?></td>
+            <td>Inicio de Vigencia</td>
+            <td>Fin de Vigencia</td>
+            <td>Cobrado</td>
+            <td><?=htmlentities('Comisión Broker');?></td>
+            <td><?=htmlentities('Comisión Total de Banco');?></td>
+            <td><?=htmlentities('Comisión Duodecima');?></td>
+            <td><?=htmlentities('Comisión del Banco descontando comisión de la duodecima');?></td>
 <?php endif ?>
         </tr>
     </thead>
@@ -666,6 +719,14 @@ $(document).ready(function(e) {
 						if ($this->token !== 'RE') {
 							$this->row['dias_expiracion'] = -1;
 						}
+
+						$bank_commission = 0;
+						$twelfth		 = 0;
+						if ($this->token === 'RL') {
+							$plan = json_decode($this->row['plan'], true);
+							$bank_commission = $this->cx->prima['AP'][$this->row['plan_nombre']]['CS'];
+							$twelfth = $bank_commission - $this->row['comision'];
+						}
 ?>
 		<tr style=" <?=$bg;?> " class="row <?= $bg_row ;?>" rel="0"
 			data-nc="<?=base64_encode($this->row['ide']);?>"
@@ -727,6 +788,21 @@ $(document).ready(function(e) {
 <?php endif ?>
 <?php if ($this->token === 'RE'): ?>
 			<td><?= $this->row['dias_expiracion'] ;?></td>
+<?php endif ?>
+<?php if ($this->token === 'RL'): ?>
+            <td><?= $this->row['numero_cuenta'] ;?></td>
+            <td><?= $this->row['numero_transaccion'] ;?></td>
+            <td><?= number_format($plan[0]['rank'], 2, '.', ',') ;?></td>
+            <td><?= number_format($this->row['monto_transaccion'], 2, '.', ',') ;?></td>
+            <td><?= $this->row['numero_cuota'] ;?></td>
+            <td><?= date('d/m/Y', strtotime($this->row['fecha_transaccion'])) ;?></td>
+            <td><?= date('d/m/Y', strtotime($this->row['inicio_vigencia'])) ;?></td>
+            <td><?= date('d/m/Y', strtotime($this->row['fin_vigencia'])) ;?></td>
+            <td><?= ((boolean)$this->row['cobrado'] ? 'SI' : 'NO') ;?></td>
+            <td><?= $this->cx->prima['AP'][$this->row['plan_nombre']]['CC'] ;?></td>
+            <td><?= $bank_commission ;?></td>
+            <td><?= number_format($this->row['comision'], 2, '.', ',') ;?></td>
+            <td><?= number_format($twelfth, 2, '.', ',') ;?></td>
 <?php endif ?>
         </tr>
 <?php
