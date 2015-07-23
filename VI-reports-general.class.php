@@ -124,7 +124,7 @@ class ReportsGeneralVI{
 			$this->xlsTitle = 'Vida Individual - Reporte de Vencimiento de Polizas'; break;
 		case md5('RL'):
 			$this->token = 'RL';
-			$this->xlsTitle = 'Vida Individual - Reporte de Vencimiento de Polizas'; break;
+			$this->xlsTitle = 'Vida Individual - Reporte de Liquidación'; break;
 		}
 
 		if($this->token === 'RG' ||
