@@ -1147,7 +1147,6 @@ $(document).ready(function(e) {
 		$("#dsp-" + data_cl + "-name-" + data_bn + ", " + 
 			"#dsp-" + data_cl + "-ln-patern-" + data_bn + ", " + 
 			"#dsp-" + data_cl + "-relation-" + data_bn + ", " + 
-			"#dsp-" + data_cl + "-dni-" + data_bn + ", " + 
 			"#dsp-" + data_cl + "-por-" + data_bn)
 		.removeClass(class_1).addClass(class_2);
 
