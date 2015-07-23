@@ -214,10 +214,8 @@ if (isset($_POST['dc-token'])
 
 							if ($link->query($queryset) === true) {
 								$arrBS[0] = 1;
-								if ($flag === true || empty($dc_code) === false) {
-									$arrBS[1] = 'vi-quote.php?ms=' . $ms . '&page=' . $page 
-										. '&pr=' . $pr . '&idc=' . base64_encode($idc);
-								}
+								$arrBS[1] = 'vi-quote.php?ms=' . $ms . '&page=' . $page 
+									. '&pr=' . $pr . '&idc=' . base64_encode($idc);
 
 								if ($flag === false) {
 									$arrBS[2] = 'Cliente registrado con Exito';
