@@ -571,12 +571,12 @@ $(document).ready(function(e) {
 <?php else: ?>
 			<td><?=htmlentities('Género');?></td>
             <td>Ciudad</td>
-            <td><?=htmlentities('Teléfono');?></td>
-            <td>Celular</td>
-            <td>Email</td>
             <td>Deudor / Codeudor</td>
             <td>Edad</td>
 <?php endif ?>
+            <td><?=htmlentities('Teléfono');?></td>
+            <td>Celular</td>
+            <td>Email</td>
             <td>Prima</td>
             <td>Forma de Pago</td>
             <td>Periodicidad</td>
@@ -751,12 +751,12 @@ $(document).ready(function(e) {
 <?php else: ?>
 			<td><?=$this->rowcl['cl_genero'];?></td>
             <td><?=$this->rowcl['cl_ciudad'];?></td>
-            <td><?=$this->rowcl['cl_telefono'];?></td>
-            <td><?=$this->rowcl['cl_celular'];?></td>
-            <td><?=$this->rowcl['cl_email'];?></td>
             <td><?=$this->rowcl['cl_titular'];?></td>
             <td><?=$this->rowcl['cl_edad'];?></td>
 <?php endif ?>
+            <td><?=$this->rowcl['cl_telefono'];?></td>
+            <td><?=$this->rowcl['cl_celular'];?></td>
+            <td><?=$this->rowcl['cl_email'];?></td>
             <td><?=$this->row['prima'];?></td>
             <td><?=$this->row['forma_pago'];?></td>
             <td><?=$this->row['periodo'];?></td>
