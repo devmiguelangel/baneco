@@ -265,7 +265,9 @@ class ReportsGeneralVI{
             CURDATE()) AS dias_expiracion,
 			sde.fecha_emision as inicio_vigencia,
 			DATE_ADD(sde.fecha_emision, INTERVAL 1 YEAR) as fin_vigencia,
-			sdd.cuenta_1 as numero_cuenta
+			sdd.cuenta_1 as numero_cuenta,
+			sdd.tomador_nombre,
+			sdd.tomador_ci_nit
 		from
 			s_vi_em_cabecera as sde
 				inner join
@@ -567,6 +569,7 @@ $(document).ready(function(e) {
             <td><?=htmlentities('Fecha de Transacción');?></td>
             <td><?=htmlentities('Días en Mora');?></td>
             <td>Estado</td>
+            <td>Tomador</td>
 <?php else: ?>
 			<td><?=htmlentities('Género');?></td>
             <td>Ciudad</td>
@@ -618,6 +621,7 @@ $(document).ready(function(e) {
 		$bgCheck 	= '';
 		$arr_state 	= array('txt' => '', 'action' => '', 'obs' => '', 'link' => '', 'bg' => '');
 		$preprinted = array(1 => 'SI', 0 => 'NO');
+		$bg		 	= '';
 		$bg_row 	= '';
 
 		while($this->row = $this->rs->fetch_array(MYSQLI_ASSOC)){
@@ -747,6 +751,8 @@ $(document).ready(function(e) {
             <td><?=$this->row['fecha_transaccion'];?></td>
             <td><?=$this->row['dias_mora'];?></td>
             <td><?=$this->cx->state_account[$this->row['estado_cuenta']];?></td>
+            <td><?= $this->row['tomador_nombre'] ;?><br>
+            	CI/NIT: <?= $this->row['tomador_ci_nit'] ;?></td>
 <?php else: ?>
 			<td><?=$this->rowcl['cl_genero'];?></td>
             <td><?=$this->rowcl['cl_ciudad'];?></td>
