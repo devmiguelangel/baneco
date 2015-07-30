@@ -234,7 +234,7 @@ class ReportsGeneralVI{
 			(select
 					count(sde1.id_emision)
 				from
-					s_de_em_cabecera as sde1
+					s_vi_em_cabecera as sde1
 				where
 					sde1.id_cotizacion = sde.id_cotizacion
 						and sde1.anulado = true) as r_num_anulado,
@@ -366,7 +366,7 @@ class ReportsGeneralVI{
 					and not exists( select
 						saf2.id_emision
 					from
-						s_de_facultativo as saf2
+						s_vi_facultativo as saf2
 					where
 						saf2.id_emision = sde.id_emision )
 					";
@@ -477,7 +477,7 @@ class ReportsGeneralVI{
 				and (exists( select
 					sde1.id_cotizacion
 				from
-					s_de_em_cabecera as sde1
+					s_vi_em_cabecera as sde1
 				where
 					sde1.id_cotizacion = sdc.id_cotizacion
 						and sde1.anulado = true
@@ -485,7 +485,7 @@ class ReportsGeneralVI{
 				or not exists( select
 					sde1.id_cotizacion
 				from
-					s_de_em_cabecera as sde1
+					s_vi_em_cabecera as sde1
 				where
 					sde1.id_cotizacion = sdc.id_cotizacion))";
 		if ($this->token !== 'RQ') {

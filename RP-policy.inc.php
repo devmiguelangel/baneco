@@ -392,9 +392,9 @@ if($rsEx->data_seek(0) === TRUE){
                 	<label class="lbl-cb"><input type="radio" id="frp-preprinted-si" 
                 		name="frp-preprinted" value="1">&nbsp;SI</label>
 					<label class="lbl-cb"><input type="radio" id="frp-preprinted-no" 
-						name="frp-preprinted" value="0" checked>&nbsp;NO</label>
+						name="frp-preprinted" value="0">&nbsp;NO</label>
 					<label class="lbl-cb"><input type="radio" id="frp-preprinted-both" 
-		            	name="frp-preprinted" value="">&nbsp;Todos</label>
+		            	name="frp-preprinted" value="" checked>&nbsp;Todos</label>
 
 		            <label style="width: auto; font-size: 90%;">N° de Pre-Impresos: </label>
 					<input type="text" id="frp-no_preprinted" name="frp-no_preprinted" value="" autocomplete="off">
