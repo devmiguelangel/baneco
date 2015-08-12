@@ -631,8 +631,14 @@ $(document).ready(function(e) {
 			if ($this->token === 'RP') {
 				if (empty($this->row['po_archivo'])) {
 					$bg_row = 'atch_pn';
+					if ($this->xls) {
+						$bg = 'background: #F31D1D; color: #fff;';
+					}
 				} else {
 					$bg_row = 'atch_py';
+					if ($this->xls) {
+						$bg = 'background: #18B745; color: #fff;';
+					}
 				}
 			} else {
 				if($swBG === FALSE){
