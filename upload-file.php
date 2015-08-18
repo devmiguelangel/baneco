@@ -5,8 +5,6 @@ $ide = null;
 $link = new SibasDB();
 
 if (isset($_GET['product']) && isset($_FILES['attached']) && isset($_POST['attached'])) {
-	
-	//$type = $link->real_escape_string(trim($_GET['type']));
 	$product = $link->real_escape_string(trim($_GET['product']));
 	$attached = $link->real_escape_string(trim(base64_decode($_POST['attached'])));
 
@@ -14,20 +12,34 @@ if (isset($_GET['product']) && isset($_FILES['attached']) && isset($_POST['attac
 	$arr_type = array();
 	$arr_extension = array();
 
-	if ($product === 'AU' || $product === 'TRM' || $product === 'AP' || $product === 'VI') {
-		$arr_type = array(
-            'application/pdf', 
-            'image/jpeg', 
-            'image/png', 
-            'image/pjpeg', 
-            'image/x-png'
-            );
-    	$arr_extension = array('rar', 'zip');
-	} elseif ($product === 'DE') {
-		$arr_type = array(
-			'text/plain'
-			);
-	}
+	$arr_type = array(
+		array(
+			'type' 	=> 'application/pdf',
+			'ext'	=> 'pdf'
+		),
+		array(
+			'type' 	=> 'binary/octet-stream',
+			'ext'	=> 'pdf'
+		),
+		array(
+			'type' 	=> 'image/jpeg',
+			'ext'	=> 'jpg'
+		),
+		array(
+			'type' 	=> 'image/png',
+			'ext'	=> 'png'
+		),
+		array(
+			'type' 	=> 'image/pjpeg',
+			'ext'	=> 'jpg'
+		),
+		array(
+			'type' 	=> 'image/x-png',
+			'ext'	=> 'png'
+		),
+	);
+	
+	$arr_extension = array('rar', 'zip');
 	
 	$sw = false;
 	if (empty($attached) === false) { $sw = true; }
@@ -39,16 +51,34 @@ if (isset($_GET['product']) && isset($_FILES['attached']) && isset($_POST['attac
 	$file_tmp = $_FILES['attached']['tmp_name'];
 	
 	$file_id = date('U') . '_' . strtolower($product) . '_' . md5(uniqid('@F#1$' . time(), true));
-	$file_extension = end(explode('.', $file_name));
-	$file_new = $file_id . '.' . $file_extension;
+	$file_extension = null;
+
+	foreach ($arr_type as $key => $type) {
+		if (array_search($file_type, $type, true) !== false) {
+			$file_extension = $type['ext'];
+			break;
+		}
+	}
+
+	if (is_null($file_extension)) {
+		$ext 	= explode('.', $file_name);
+		$fext	= end($ext);
+
+		if (in_array($fext, $arr_extension)) {
+			$file_extension = $fext;
+		}
+	}
 	
 	if ($_FILES['attached']['error'] > 0) {
 		echo '0|' . fileUploadErrorMsg($_FILES['attached']['error']);
 	} else {
 		if ((20 * 1024 * 1024) >= $file_size 
             && (in_array($file_type, $arr_type) === true 
-                || in_array($file_extension, $arr_extension))) {
-            
+                || !is_null($file_extension))) {
+
+			$file_new = $file_id . '.' . $file_extension;
+            var_dump($file_new);
+            exit();
 			$dir = 'files/';
 			if (!is_dir($dir)) {
 				mkdir($dir, 0777);
@@ -95,8 +125,8 @@ if (isset($_GET['product']) && isset($_FILES['attached']) && isset($_POST['attac
 	}
 
 	if ($ide !== null) {
-		header('Location: index.php?ms=' . md5('MS_REP') 
-			. '&page=' . md5('P_policy') . '&pr=' . base64_encode($product));
+		// header('Location: index.php?ms=' . md5('MS_REP') 
+		// 	. '&page=' . md5('P_policy') . '&pr=' . base64_encode($product));
 	}
 } elseif (isset($_POST['ide'], $_POST['product'], $_FILES['attached'])) {
 	$attached = '';
