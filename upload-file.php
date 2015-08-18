@@ -124,8 +124,8 @@ if (isset($_GET['product']) && isset($_FILES['attached']) && isset($_POST['attac
 	}
 
 	if ($ide !== null) {
-		// header('Location: index.php?ms=' . md5('MS_REP') 
-		// 	. '&page=' . md5('P_policy') . '&pr=' . base64_encode($product));
+		header('Location: index.php?ms=' . md5('MS_REP') 
+			. '&page=' . md5('P_policy') . '&pr=' . base64_encode($product));
 	}
 } elseif (isset($_POST['ide'], $_POST['product'], $_FILES['attached'])) {
 	$attached = '';
