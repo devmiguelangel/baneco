@@ -77,8 +77,7 @@ if (isset($_GET['product']) && isset($_FILES['attached']) && isset($_POST['attac
                 || !is_null($file_extension))) {
 
 			$file_new = $file_id . '.' . $file_extension;
-            var_dump($file_new);
-            exit();
+            
 			$dir = 'files/';
 			if (!is_dir($dir)) {
 				mkdir($dir, 0777);
