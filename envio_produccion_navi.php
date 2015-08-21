@@ -15,6 +15,65 @@ mysql_select_db($db,$conexion);*/
 $link = new SibasDB();
 $ca=$cv=0;
 	
+	$cur_dia=date('d');//'01';
+	$cur_mes=date('m');//'01';
+	$cur_anio=date('Y');//'2014';
+	$nom_dia=date('D');//'Wen';
+	
+	if($nom_dia=='Mon'){
+		//Es Lunes
+		$ant_dia=$cur_dia-3;
+	}else{
+		//No es Lunes
+		$ant_dia=$cur_dia-1;
+	}
+	
+	if($ant_dia<=0){
+		//echo 'Es inicio de mes<br />';
+		$ant_mes=$cur_mes-1;
+		$ant_anio=$cur_anio;
+		
+		if($ant_mes==0){
+			//echo 'Es Enero<br />';
+			$ant_anio=$cur_anio-1;
+			$ant_mes=12;
+		}
+		
+		//Sacamos el ultimo dia del mes
+		$new_dia=fecha($ant_mes,$ant_anio);
+		
+		$ant_dia=$new_dia + $ant_dia;
+			
+	}else{
+		//echo 'No es inicio de mes<br />';
+		$ant_mes=$cur_mes;
+		$ant_anio=$cur_anio;
+	}
+	
+	//echo 'Fecha resultado: '.$dia.'-'.$mes.'-'.$anio;
+	//echo 'Fecha Anterior: '.$ant_anio.'-'.$ant_mes.'-'.$ant_dia;//$fecha_ant=date($anio.'-'.$mes.'-'.$dia);
+	//$fecha_ant=date('2014-09-12');
+	//echo '<br />Fecha Actual: '.$cur_anio.'-'.$cur_mes.'-'.$cur_dia;//$fecha_act=date('Y-m-d');
+	
+	function fecha($month, $year){
+		switch ($month):
+			case 1: case 3: case 5: case 7: case 8: case 10: case 12: return 31;
+			case 4: case 6: case 9: case 11: return 30;			
+			case 2:
+				$val=bisiesto($year);
+			return $val;
+		endswitch;
+	}
+	
+	function bisiesto($year){		
+		if(($year % 4 == 0) && (($year % 100 != 0) || ($year % 400 == 0))){
+			return 29;
+		}else{
+			return 28;
+		}
+	}
+	
+	$date2=date($ant_anio.'-'.$ant_mes.'-'.$ant_dia);
 	
 $sap="SELECT 
 	case sag.id_depto when 1 then 3 when 4 then 2 when 5 then 5 when 6 then 6 when 7 then 1 when 8 then 7 end as p_venta, 
@@ -23,8 +82,8 @@ $sap="SELECT
 	sde.tomador_ci_nit, if(sca.factura_nit = ' ', 'BSCI', 'CI') as  tipo_doc_fac, sca.factura_nit, 
 	case sdep.id_depto when 1 then 3 when 4 then 2 when 5 then 5 when 6 then 6 when 7 then 4 when 8 then 7 end as sucursal, sp.plan, case sca.periodo when 'Y' then 1 when 'M' then 2 end as periodo, sca.no_emision, 0 as n_familiar, 'N' as beneficiario, 0 as parent, 'BSCI' as tipo_doc_ben, 0 as ci_ben, 
 	sc.genero, sc.paterno, sc.materno, sc.nombre, Date_format(sc.fecha_nacimiento,'%d/%m/%Y') as f_nac, if(sc.extension = 11, 'CIE',  if(sc.complemento != '', if(sc.complemento = sd.codigo, 'CI','CID'), 'CI')) as tipo_doc_asoc, if(sc.extension = 11, concat('E-', sc.ci),if(sc.complemento = sd.codigo, concat(sc.ci, sd.codigo), if(sc.complemento != '', concat(sc.ci, '-', sc.complemento, sd.codigo), concat(sc.ci, sd.codigo)))) as id_asoc, sp.plan as base_aseg, 337 as tipo_dir, 
-	sc.direccion, case sdep.id_depto when 1 then 4 when 2 then 5 when 3 then 7 when 4 then 3 when 5 then 2 when 6 then 9 when 7 then 8 when 8 then 1 when 9 then 6 end as departamento, case sdep.id_depto when 1 then 75 when 2 then 181 when 3 then 217 when 4 then 126 when 5 then 17 when 6 then 243 when 7 then 297 when 8 then 322 when 9 then 326 end as ciudad, sc.email, sc.telefono_domicilio, sc.telefono_celular, 0 as part, sc.desc_ocupacion, case sca.forma_pago when 'DA' then 15 when 'DM' then 15 when 'CO' then 18 end as forma_pago, if(sca.forma_pago = 'CO', 1, 4) as conducto, 
-	1 as banco, if(sca.forma_pago = 'CO', 'OTR', 'AHO') as tipo_cuenta, if(sde.cuenta_1 = 0, ' ', sde.cuenta_1) as cuenta_1, sde.tarjeta, 1 as canal, sag.codigo as agencia, sc.ci, 1 as convenio, case sp.nombre when 'Plan A' then 200 when 'Plan B' then 201 when 'Plan C' then 202 when 'Plan D' then 203 end as n_plan, 19 as red_b, sde.id_detalle
+	sc.direccion, case sdep.id_depto when 1 then 4 when 2 then 5 when 3 then 7 when 4 then 3 when 5 then 2 when 6 then 9 when 7 then 8 when 8 then 1 when 9 then 6 end as departamento, case sdep.id_depto when 1 then 75 when 2 then 181 when 3 then 217 when 4 then 126 when 5 then 17 when 6 then 243 when 7 then 297 when 8 then 322 when 9 then 326 end as ciudad, sc.email, sc.telefono_domicilio, sc.telefono_celular, 0 as part, sc.desc_ocupacion, case sca.forma_pago when 'DA' then 15 when 'DM' then 15 when 'CO' then 14 end as forma_pago, if(sca.forma_pago = 'CO', 5, 4) as conducto, 
+	if(sca.forma_pago = 'CO', '', 1) as banco, if(sca.forma_pago = 'CO', 'CRE', 'AHO') as tipo_cuenta, if(sde.cuenta_1 = 0, ' ', sde.cuenta_1) as cuenta_1, sde.tarjeta, if(sca.forma_pago = 'CO', 9, 1) as canal, sag.codigo as agencia, sc.ci, 1 as convenio, case sp.nombre when 'Plan A' then 200 when 'Plan B' then 201 when 'Plan C' then 202 when 'Plan D' then 203 end as n_plan, 19 as red_b, sde.id_detalle
 	
 from 
 						s_ap_em_cabecera as sca
@@ -50,7 +109,7 @@ where
 						sca.anulado = 0 and
 						sus.nombre not like '%sudamericana%' and
 						sus.usuario not like '%emontano%' and
-						sca.fecha_emision between '2015-06-24' and '2015-06-30'
+						sca.fecha_emision between '".$date2."' and curdate()
 ORDER BY
 sca.no_emision ASC"; 				
 //echo $sap.'<br><br><br>';
@@ -60,8 +119,8 @@ $svi="SELECT
 	case sag.id_depto when 1 then 3 when 4 then 2 when 5 then 5 when 6 then 6 when 7 then 1 when 8 then 7 end as p_venta, 1 as p_ingresada, sca.no_poliza, Date_format(sca.fecha_emision,'%d/%m/%Y') as f_emision, Date_format(sca.fecha_creacion,'%d/%m/%Y') as f_ingreso, if(sde.tomador_ci_nit = ' ', 'BSCI', 'CI') as tipo_doc_tom, sde.tomador_ci_nit, if(sca.factura_nit = ' ', 'BSCI', 'CI') as  tipo_doc_fac, sca.factura_nit, 
 	case sdep.id_depto when 1 then 3 when 4 then 2 when 5 then 5 when 6 then 6 when 7 then 4 when 8 then 7 end as sucursal, sp.plan, case sca.periodo when 'Y' then 1 when 'M' then 2 end as periodo, sca.no_emision, 0 as n_familiar, 'N' as beneficiario, 0 as parent, 'BSCI' as tipo_doc_ben, 0 as ci_ben, 
 	sc.genero, sc.paterno, sc.materno, sc.nombre, Date_format(sc.fecha_nacimiento,'%d/%m/%Y') as f_nac, if(sc.extension = 11, 'CIE',  if(sc.complemento != '', if(sc.complemento = sd.codigo, 'CI','CID'), 'CI')) as tipo_doc_asoc, if(sc.extension = 11, concat('E-', sc.ci),if(sc.complemento = sd.codigo, concat(sc.ci, sd.codigo), if(sc.complemento != '', concat(sc.ci, '-', sc.complemento, sd.codigo), concat(sc.ci, sd.codigo)))) as id_asoc, sp.plan as base_aseg, 337 as tipo_dir, 	
-	sc.direccion, case sdep.id_depto when 1 then 4 when 2 then 5 when 3 then 7 when 4 then 3 when 5 then 2 when 6 then 9 when 7 then 8 when 8 then 1 when 9 then 6 end as departamento, case sdep.id_depto when 1 then 75 when 2 then 181 when 3 then 217 when 4 then 126 when 5 then 17 when 6 then 243 when 7 then 297 when 8 then 322 when 9 then 326 end as ciudad, sc.email, sc.telefono_domicilio, sc.telefono_celular, 0 as part, sc.desc_ocupacion, case sca.forma_pago when 'DA' then 15 when 'DM' then 15 when 'CO' then 18 end as forma_pago, if(sca.forma_pago = 'CO', 1, 4) as conducto, 
-	1 as banco, if(sca.forma_pago = 'CO', 'OTR', 'AHO') as tipo_cuenta, if(sde.cuenta_1 = 0, ' ', sde.cuenta_1) as cuenta_1, sde.tarjeta, 1 as canal, sag.codigo as agencia, sc.ci, 1 as convenio, case sp.nombre when 'Plan A' then 300 when 'Plan B' then 301 when 'Plan C' then 302 when 'Plan D' then 303 end as n_plan, 19 as red_b, sde.id_detalle
+	sc.direccion, case sdep.id_depto when 1 then 4 when 2 then 5 when 3 then 7 when 4 then 3 when 5 then 2 when 6 then 9 when 7 then 8 when 8 then 1 when 9 then 6 end as departamento, case sdep.id_depto when 1 then 75 when 2 then 181 when 3 then 217 when 4 then 126 when 5 then 17 when 6 then 243 when 7 then 297 when 8 then 322 when 9 then 326 end as ciudad, sc.email, sc.telefono_domicilio, sc.telefono_celular, 0 as part, sc.desc_ocupacion, case sca.forma_pago when 'DA' then 15 when 'DM' then 15 when 'CO' then 14 end as forma_pago, if(sca.forma_pago = 'CO', 5, 4) as conducto, 
+	if(sca.forma_pago = 'CO', '', 1) as banco, if(sca.forma_pago = 'CO', 'CRE', 'AHO') as tipo_cuenta, if(sde.cuenta_1 = 0, ' ', sde.cuenta_1) as cuenta_1, sde.tarjeta, if(sca.forma_pago = 'CO', 9, 1) as canal, sag.codigo as agencia, sc.ci, 1 as convenio, case sp.nombre when 'Plan A' then 300 when 'Plan B' then 301 when 'Plan C' then 302 when 'Plan D' then 303 end as n_plan, 19 as red_b, sde.id_detalle
 	
 from 
 						s_vi_em_cabecera as sca
@@ -87,7 +146,7 @@ where
 						sca.anulado = 0 and
 						sus.nombre not like '%sudamericana%' and
 						sus.usuario not like '%emontano%' and
-						sca.fecha_emision between '2015-06-24' and '2015-06-30'
+						sca.fecha_emision between '".$date2."' and curdate()
 ORDER BY
 sca.no_emision ASC"; 				
 //echo $svi;
