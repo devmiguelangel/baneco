@@ -351,7 +351,7 @@ if ($token === true){
 							pre_impreso, no_preprinted, id_rango, cobertura, id_usuario, factura_nombre, 
 							factura_nit, fecha_creacion, anulado, and_usuario, fecha_anulado, 
 							motivo_anulado, emitir, fecha_emision, id_compania, id_poliza, 
-							id_plan, forma_pago, periodo, prima, no_copia, leido, id_certificado) 
+							id_plan, forma_pago, periodo, prima, no_copia, leido, id_certificado, created_at) 
 						values 
 						("' . $ID . '", "' . $record . '", "' . $dcr_no_policy . '", 
 							"' . base64_decode($_SESSION['idEF']) . '", ' . $idc . ', 
@@ -362,7 +362,7 @@ if ($token === true){
 							"' . base64_decode($_SESSION['idUser']) . '", "", "", false, "", 
 							"' . $dcr_cia . '", "' . $dcr_policy . '", "' . $dcr_plan . '", 
 							"' . $dcr_payment . '", "' . $dcr_period . '", "' . $dcr_prima . '", 
-							0, false, 1 ) ;';
+							0, false, 1, now()) ;';
 						
 						$sqlCL = '';
 						

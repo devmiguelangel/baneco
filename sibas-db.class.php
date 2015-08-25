@@ -2775,9 +2775,11 @@ class SibasDB extends MySQLi
 		from
 			s_' . strtolower($pr) . '_em_cabecera as sae
 		where
-			sae.no_poliza = "' . $no_poliza . '"
+			sae.no_poliza like "%' . $no_poliza . '%"
 		limit 0, 1
 		;';
+
+		usleep(15000, 2000000);
 
 		if (($this->rs = $this->query($this->sql, MYSQLI_STORE_RESULT)) !== false) {
 			if ($this->rs->num_rows === 0) {
