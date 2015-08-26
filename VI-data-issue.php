@@ -520,7 +520,7 @@ if ($rsDep->data_seek(0) === true) {
 		<label>Ocupación: <span>*</span></label>
 		<div class="content-input">
 			<select id="dc-<?=$cont;?>-occupation" name="dc-<?=$cont;?>-occupation" 
-				class="required fbin <?=$read_save . ' ' . $read_save_2;?>" <?=$read_save;?>>
+				class="required fbin <?= $read_save ;?>" <?=$read_save;?>>
 				<option value="">Seleccione...</option>
 <?php
 if (($rsOcc = $link->get_occupation($_SESSION['idEF'], 'VI')) !== FALSE) {

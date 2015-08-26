@@ -2779,7 +2779,7 @@ class SibasDB extends MySQLi
 		limit 0, 1
 		;';
 
-		usleep(15000, 2000000);
+		usleep(mt_rand(15000, 2000000));
 
 		if (($this->rs = $this->query($this->sql, MYSQLI_STORE_RESULT)) !== false) {
 			if ($this->rs->num_rows === 0) {
