@@ -73,6 +73,9 @@ $link = new SibasDB();
 	}
 	
 	$date2=date($ant_anio.'-'.$ant_mes.'-'.$ant_dia);
+
+	$dia = date('d') - 1;
+	$date = date('Y-m-'.$dia);
 	
 $sap="SELECT 
 			if(sc.extension = 11, 'CIE', if(sc.complemento != '', if(sc.complemento = sd.codigo, 'CI','CID'), 'CI')) as tipo_doc_asoc, 
@@ -101,11 +104,11 @@ where
 						sus.nombre not like '%sudamericana%' and
 						sus.usuario not like '%emontano%' and
 						sac.cobrado = 1 and
-						sac.fecha_transaccion between '".$date2."' and curdate()
+						sac.fecha_transaccion between '".$date2."' and '".$date."'
 ORDER BY
 sca.no_emision ASC,
 sac.numero_cuota ASC"; 				
-//echo $selectdes;
+echo $sap;
 			$cap = $link->query($sap,MYSQLI_STORE_RESULT);
 
 $svi="SELECT 
@@ -135,7 +138,7 @@ where
 						sus.nombre not like '%sudamericana%' and
 						sus.usuario not like '%emontano%' and
 						sac.cobrado = 1 and
-						sac.fecha_transaccion between '".$date2."' and curdate()
+						sac.fecha_transaccion between '".$date2."' and '".$date."'
 ORDER BY
 sca.no_emision ASC,
 sac.numero_cuota ASC"; 				

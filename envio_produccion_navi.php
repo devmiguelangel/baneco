@@ -10,8 +10,7 @@ $db = $con->db;
 $conexion = mysql_connect($host, $user, $password) or die ("Fallo en el establecimiento de la conexi&oacute;n");
 mysql_select_db($db,$conexion);*/
 //echo $conexion;
-    $date=date("Y-m-d");
-	//echo $date; 
+    
 $link = new SibasDB();
 $ca=$cv=0;
 	
@@ -75,6 +74,10 @@ $ca=$cv=0;
 	
 	$date2=date($ant_anio.'-'.$ant_mes.'-'.$ant_dia);
 	
+	$dia = date('d') - 1;
+	$date = date('Y-m-'.$dia);
+
+	
 $sap="SELECT 
 	case sag.id_depto when 1 then 3 when 4 then 2 when 5 then 5 when 6 then 6 when 7 then 1 when 8 then 7 end as p_venta, 
 	1 as p_ingresada, sca.no_poliza, Date_format(sca.fecha_emision,'%d/%m/%Y') as f_emision, 
@@ -106,13 +109,12 @@ from
 						
 where
 						sca.emitir = 1 and 
-						sca.anulado = 0 and
 						sus.nombre not like '%sudamericana%' and
 						sus.usuario not like '%emontano%' and
-						sca.fecha_emision between '".$date2."' and curdate()
+						sca.fecha_emision between '".$date2."' and '".$date."'
 ORDER BY
 sca.no_emision ASC"; 				
-//echo $sap.'<br><br><br>';
+echo $sap.'<br><br><br>';
 			$cap = $link->query($sap,MYSQLI_STORE_RESULT);
 
 $svi="SELECT 
@@ -143,10 +145,9 @@ from
 						
 where
 						sca.emitir = 1 and 
-						sca.anulado = 0 and
 						sus.nombre not like '%sudamericana%' and
 						sus.usuario not like '%emontano%' and
-						sca.fecha_emision between '".$date2."' and curdate()
+						sca.fecha_emision between '".$date2."' and '".$date."'
 ORDER BY
 sca.no_emision ASC"; 				
 //echo $svi;

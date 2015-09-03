@@ -310,6 +310,8 @@ if($tipo_sesion=='ROOT'){
 						order by producto;";
 				if($res = $conexion->query($select,MYSQLI_STORE_RESULT)){
 
+						$num = $res->num_rows;
+						if($num>0){$id='id="da-ex-datatable-numberpaging"';}else{$id='';}
 						echo'
 						<div class="da-panel collapsible" style="width:750px;">
 							<div class="da-panel-header">
@@ -319,7 +321,7 @@ if($tipo_sesion=='ROOT'){
 								</span>
 							</div>
 							<div class="da-panel-content">
-								<table class="da-table">
+								<table class="da-table" '.$id.'>
 									<thead>
 										<tr>
 											<th><b><span lang="es">Nombre</span></b></th>
@@ -329,7 +331,7 @@ if($tipo_sesion=='ROOT'){
 										</tr>
 									</thead>
 									<tbody>';
-									  $num = $res->num_rows;
+									  
 									  if($num>0){
 											while($regi = $res->fetch_array(MYSQLI_ASSOC)){
 												echo'<tr id="del-'.$regi['id_correo'].'">
