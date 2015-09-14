@@ -48,7 +48,7 @@ $link = new SibasDB();
 					where
 						sde.emitir = true and
 						sde.anulado = false and
-						sde.fecha_creacion between '".$date_b."' and '".$date_e."' and
+						sde.fecha_emision between '".$date_b."' and '".$date_e."' and
 						sag.id_agencia = '" .$rowAg['id_agencia']. "'
 					";
 
@@ -79,7 +79,7 @@ $link = new SibasDB();
 					where
 						sde.emitir = true and
 						sde.anulado = false and
-						sde.fecha_creacion between '".$date_b."' and '".$date_e."' and
+						sde.fecha_emision between '".$date_b."' and '".$date_e."' and
 						sag.id_agencia = '" .$rowAg['id_agencia']. "'
 					";
 
@@ -132,7 +132,7 @@ $link = new SibasDB();
 			where
 				sde.emitir = true and
 				sde.anulado = false and
-				sde.fecha_creacion between '".$date_b."' and '".$date_e."' and
+				sde.fecha_emision between '".$date_b."' and '".$date_e."' and
 				sdep.id_depto = " .base64_decode($subsidiary). "
 			";
 
@@ -177,7 +177,7 @@ $link = new SibasDB();
 					where
 						sde.emitir = true and
 						sde.anulado = false and
-				sde.fecha_creacion between '".$date_b."' and '".$date_e."' and
+				sde.fecha_emision between '".$date_b."' and '".$date_e."' and
 				sdep.id_depto = " .base64_decode($subsidiary). "
 			";
 
@@ -221,7 +221,7 @@ $link = new SibasDB();
 				where
 					sde.emitir = true and
 					sde.anulado = false and
-					sde.fecha_creacion between '".$date_b."' and '".$date_e."' and
+					sde.fecha_emision between '".$date_b."' and '".$date_e."' and
 					sag.agencia = '" . $agency .  "'
 			";
 
@@ -265,7 +265,7 @@ $link = new SibasDB();
 				where
 					sde.emitir = true and
 					sde.anulado = false and
-					sde.fecha_creacion between '".$date_b."' and '".$date_e."' and
+					sde.fecha_emision between '".$date_b."' and '".$date_e."' and
 					sag.agencia = '" . $agency .  "'
 			";
 

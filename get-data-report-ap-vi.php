@@ -129,7 +129,7 @@ if($_GET['frp-type']=='production'){
 							sca.emitir = true and
 							sca.anulado = false and
 							sus.id_usuario = "'.$rowUs['id_usuario'].'" and
-							sca.fecha_creacion between "'.$date_b.'" and "'.$date_e.'"
+							sca.fecha_emision between "'.$date_b.'" and "'.$date_e.'"
 						group by
 							sp.id_plan
 						;';
@@ -220,7 +220,7 @@ if($_GET['frp-type']=='production'){
 							sca.emitir = true and
 							sca.anulado = false and
 							sus.id_usuario = "'.$rowUs['id_usuario'].'" and
-							sca.fecha_creacion between "'.$date_b.'" and "'.$date_e.'"
+							sca.fecha_emision between "'.$date_b.'" and "'.$date_e.'"
 						group by
 							sp.id_plan
 						;';
