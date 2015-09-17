@@ -4,7 +4,7 @@
 
 require __DIR__ . '/../PHPMailer/class.phpmailer.php';
 
-$db = new PDO('mysql:dbname=baneco;host=127.0.0.1', 'admin', 'CoboserDB@3431#');
+$db = new PDO('mysql:dbname=baneco;host=127.0.0.1', 'root', 'fOXenq7ftJvW');
 
 $sql = 'SELECT
       id_cobranza,
@@ -62,15 +62,17 @@ $msg = ob_get_clean();
 
 $mail = new PHPMailer();
 
-$mail->Host     = 'mmamani@coboser.com';
-$mail->From     = 'mmamani@coboser.com';
-$mail->FromName = 'Sudamericana';
+$mail->Host     = 'info@sudseguros.com';
+$mail->From     = 'info@sudseguros.com';
+$mail->FromName = 'Sibas Info';
 $mail->Subject  = 'Baneco - Registros duplicados Cobranzas - ' . date('d/m/Y');
 
 $mail->addAddress('emontano@sudseguros.com', 'Ernesto Montaño');
 $mail->addAddress('mmamani@coboser.com', 'Miguel Mamani');
-$mail->addAddress('cchalco@coboser.com', 'Miguel Mamani');
+$mail->addAddress('cchalco@coboser.com', 'Carlos Chalco');
 $mail->addAddress('jvera@coboser.com', 'Juan Pablo Vera');
+$mail->addCC('djmiguelarango@outlook.com', 'Miguel A. Mamani');
+$mail->addCC('carloschalco2015@gmail.com', 'Carlos Chalco H.');
 
 $mail->Body     = $msg;
 $mail->AltBody  = $msg;
