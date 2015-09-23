@@ -326,6 +326,7 @@ function get_menu($user_type, $tokenM, $link){
             <li><a href="index.php?ms=<?=md5('MS_COMP');?>&page=<?=md5('P_contacts');?>">Contacte con nosotros</a></li>
         </ul>
     </li>
+    <?php if ($tokenM): ?>
     <li>
       <a href="#">Productos</a>
       <ul class="mega">
@@ -397,10 +398,12 @@ if (($rsMenu = $link->get_product_menu($_SESSION['idEF'])) !== FALSE) {
 }
 ?>
       </ul>
+    
     </li>
+    <?php endif ?>
     <?php if ($tokenM === true): ?>
       <?php if ($user_type === 'ROOT' || $user_type === 'LOG' || $user_type === 'REP' || $user_type === 'FAC'): ?>
-    <li><a href="#">Reportes</a>
+        <li><a href="#">Reportes</a>
         <ul>
       <li><a href="index.php?ms=<?=md5('MS_REP');?>&page=<?=md5('P_general');?>">Generales</a></li>
       <?php if ($user_type !== 'LOG'): ?>
