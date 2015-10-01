@@ -347,13 +347,6 @@ if ($token === true){
                         } else {
                             $arr_cl[$cont]['cl-d-idd'] = uniqid('@S#1$2013' . $cont, true);
                         }
-
-                        $arr_cl[$cont]['sql'] = '';
-                        if (isset($_POST['dd-'.$cont.'-id_detalle'])) {
-                            $id_detalle = base64_decode($_POST['dd-' . $cont . '-id_detalle']);
-                            $arr_cl[$cont]['sql'] = 
-                                get_result_question($link, $id_detalle, $arr_cl[$cont]['cl-d-idd']);
-                        }
                     }
                     
                     $prefix = array();
@@ -536,7 +529,10 @@ if ($token === true){
                             "' . $arr_cl[$k]['cl-share'] . '", 
                             "' . $arr_cl[$k]['cl-titular'] . '" ),';
 
-                            $sqlRs .= $arr_cl[$k]['sql'] . ',';
+                            $sqlRs .= '("' . uniqid('@S#1$2014', true) . '", 
+                            "' . $arr_cl[$k]['cl-d-idd'] . '", 
+                            "' . $link->real_escape_string('{"1":"1|0","2":"2|0"}') . '", 
+                            ""),';
                             
                             for ($i = 1; $i <= $beneficiary ; $i++) {
                                 if ($arr_cl[$k]['cl-bn-active-' . $i]
@@ -806,32 +802,4 @@ if ($token === true){
 
 echo json_encode($arrDE);
 
-function get_result_question($link, $id_detalle, $idd)
-{
-    $sql = 'select 
-        sar.id_respuesta, sar.respuesta, sar.observacion
-    from 
-        s_ap_cot_detalle as sdd
-            inner join
-        s_ap_cot_respuesta as sar ON (sar.id_detalle = sdd.id_detalle)
-    where
-        sdd.id_detalle = "' . $id_detalle . '"
-    ;';
-
-    if (($rs = $link->query($sql, MYSQLI_STORE_RESULT)) !== false) {
-        if ($rs->num_rows === 1) {
-            $row = $rs->fetch_array(MYSQLI_ASSOC);
-            $rs->free();
-
-            $sqlRs = '("' . uniqid('@S#1$2014', true) . '", 
-                "' . $idd . '", 
-                "' . $link->real_escape_string($row['respuesta']) . '", 
-                "' . $row['observacion'] . '")';
-
-            return $sqlRs;
-        }
-    }
-
-    return '';
-}
 ?>
