@@ -108,19 +108,21 @@ if ($token === true){
                     $arr_res        = array(1 => '');
                     $dc_pledge      = false;
                     $dc_case_number = '';
+                    $dc_pledge_amount = 0;
 
                     if ($dcr_payment === 'DA' && $sw === 1) {
                         if (isset($_POST['dc-pledge'])) {
                             $dc_pledge = true;
 
                             $dc_case_number = $link->real_escape_string(trim($_POST['dc-case-number']));
+                            $dc_pledge_amount = $link->getAmountPledge($dcr_period, $dcr_prima);
 
                             if ($ws_cnx) {
                                 $ws = new WSBaneco('RP');
 
                                 $params = array(
                                     'nroCaso'   => $dc_case_number,
-                                    'importe'   => $link->getAmountPledge($dcr_period, $dcr_prima),
+                                    'importe'   => $dc_pledge_amount,
                                     'moneda'    => 1,
                                     'usuario'   => $ws_usuario
                                 );
@@ -386,18 +388,25 @@ if ($token === true){
                             factura_nit, fecha_creacion, anulado, and_usuario, fecha_anulado, 
                             motivo_anulado, emitir, fecha_emision, id_compania, id_poliza, id_plan, 
                             forma_pago, periodo, prima, no_copia, leido, id_certificado, created_at,
-                            pledge, case_number) 
+                            pledge, case_number, pledge_amount) 
                         values 
-                        ("' . $ID . '", "' . $record . '", "' . $dcr_no_policy . '", 
-                            "' . base64_decode($_SESSION['idEF']) . '", ' . $idc . ', 
-                            "' . $prefix[0] . '", ' . $arrPrefix . ', "' . $dcr_print . '", 
-                            "' . $dcr_policy_pp . '", ' . $dcr_rango . ', ' . $cont . ', 
-                            "' . base64_decode($_SESSION['idUser']) . '", "' . $bill_name . '", 
-                            "' . $bill_nit . '", curdate(), false, 
-                            "' . base64_decode($_SESSION['idUser']) . '", "", "", false, "", 
-                            "' . $dcr_cia . '", "' . $dcr_policy . '", "' . $dcr_plan . '", 
-                            "' . $dcr_payment . '", "' . $dcr_period . '", "' . $dcr_prima . '", 
-                            0, false, 1, now(), "' . (int)$dc_pledge . '", "' . $dc_case_number . '") ;';
+                        ("' . $ID . '", "' . $record . '", 
+                            "' . $dcr_no_policy . '", 
+                            "' . base64_decode($_SESSION['idEF']) . '", 
+                            ' . $idc . ', "' . $prefix[0] . '", 
+                            ' . $arrPrefix . ', "' . $dcr_print . '", 
+                            "' . $dcr_policy_pp . '", ' . $dcr_rango . ', 
+                            ' . $cont . ', 
+                            "' . base64_decode($_SESSION['idUser']) . '", 
+                            "' . $bill_name . '", "' . $bill_nit . '", 
+                            curdate(), false, 
+                            "' . base64_decode($_SESSION['idUser']) . '", 
+                            "", "", false, "", "' . $dcr_cia . '", 
+                            "' . $dcr_policy . '", "' . $dcr_plan . '", 
+                            "' . $dcr_payment . '", "' . $dcr_period . '", 
+                            "' . $dcr_prima . '", 0, false, 1, now(), 
+                            "' . (int)$dc_pledge . '", "' . $dc_case_number . '",
+                            "' . $dc_pledge_amount . '") ;';
                         
                         $sqlCL = '';
                         
