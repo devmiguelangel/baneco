@@ -2772,7 +2772,7 @@ class CertificateQuery extends CertificateHtml {
 						WHERE
 						    sad.id_emision = "' . $this->rowPo['id_emision'] . '"
 						;';	
-						echo $this->sqlBs;
+						// echo $this->sqlBs;
 						if ($this->rsBs = $this->cx->query($this->sqlBs, MYSQLI_STORE_RESULT)) {
 							if ($this->rsBs->num_rows > 0) {
 								$this->error = FALSE;

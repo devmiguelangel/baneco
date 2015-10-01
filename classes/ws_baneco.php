@@ -9,7 +9,9 @@ class WSBaneco {
             'DC'    => 'DatosCliente',
             'RC'    => 'RegistrarOrdenCobro',
             'VC'    => 'VerificarCobro',
-            'CC'    => 'ValidarCuenta'
+            'CC'    => 'ValidarCuenta',
+            'RP'    => 'RegistrarPignoracion',
+            'VP'    => 'NroCasoTieneDesembolso',
         ),
         $namespace,
         $soapAction,
@@ -42,7 +44,7 @@ class WSBaneco {
             $this->error = $this->soapClient->getError();
 
             if (empty($this->error)) {
-                if (is_array($this->response) === true && $this->method !== 'RC') {
+                if (is_array($this->response) && $this->method !== 'RC') {
                     switch ($this->method) {
                     case 'U':
                         return $this->get_user();
@@ -58,6 +60,12 @@ class WSBaneco {
                         break;
                     case 'CC':
                         return $this->get_account_check();
+                        break;
+                    case 'RP':
+                        return $this->getPledgeRegistered();
+                        break;
+                    case 'VP':
+                        return $this->getPledgeCheck();
                         break;
                     }
                 } elseif ($this->method === 'RC') {
@@ -77,10 +85,10 @@ class WSBaneco {
 
     private function get_user()
     {
-        if (is_array($this->response['ValidacionUsuarioCmpResult']) === true) {
+        if (is_array($this->response['ValidacionUsuarioCmpResult'])) {
             $this->data = $this->response['ValidacionUsuarioCmpResult']['diffgram'];
             
-            if (array_key_exists('NewDataSet', $this->data) === true) {
+            if (array_key_exists('NewDataSet', $this->data)) {
                 $this->data = $this->data['NewDataSet']['usuario'];
                 return true;
             } else {
@@ -95,10 +103,10 @@ class WSBaneco {
 
     private function get_client()
     {
-        if (is_array($this->response['BuscarClienteResult']) === true) {
+        if (is_array($this->response['BuscarClienteResult'])) {
             $this->data = $this->response['BuscarClienteResult']['diffgram'];
             
-            if (is_array($this->data) === true) {
+            if (is_array($this->data)) {
                 $this->data = $this->data['NewDataSet']['cliente'];
                 return true;
             } else {
@@ -113,10 +121,10 @@ class WSBaneco {
 
     private function get_client_data()
     {
-        if (is_array($this->response['DatosClienteResult']) === true) {
+        if (is_array($this->response['DatosClienteResult'])) {
             $this->data = $this->response['DatosClienteResult']['diffgram'];
             
-            if (is_array($this->data) === true) {
+            if (is_array($this->data)) {
                 $this->data = $this->data['NewDataSet']['cliente'];
                 return true;
             } else {
@@ -131,7 +139,7 @@ class WSBaneco {
 
     private function get_collection_record()
     {
-        if (empty($this->response) === true && is_array($this->response) === false) {
+        if (empty($this->response) && !is_array($this->response)) {
             return true;
         } else {
             $this->message = 'No se pudo registrar la Orden de Cobro';
@@ -142,10 +150,10 @@ class WSBaneco {
 
     private function get_collection_check()
     {
-        if (is_string($this->response['VerificarCobroResult']) === true) {
+        if (is_string($this->response['VerificarCobroResult'])) {
             $this->data = $this->response['VerificarCobroResult'];
             
-            if (empty($this->data) === false) {
+            if (!empty($this->data)) {
                 return true;
                 /*if ($this->data === 'true') {
                     return true;
@@ -164,7 +172,7 @@ class WSBaneco {
 
     private function get_account_check()
     {
-        if (is_array($this->response['ValidarCuentaResult']) === true) {
+        if (is_array($this->response['ValidarCuentaResult'])) {
             $this->data = $this->response['ValidarCuentaResult'];
             
             if ($this->data['CodigoMensaje'] === '0000') {
@@ -179,5 +187,26 @@ class WSBaneco {
         return false;
     }
 
+    private function getPledgeRegistered()
+    {
+        if (count($this->response) === 1) {
+            if (array_key_exists('RegistrarPignoracionResult', $this->response)) {
+                return (int)$this->response['RegistrarPignoracionResult'];
+            }
+        }
+
+        return 0;
+    }
+
+    private function getPledgeCheck()
+    {
+        if (array_key_exists('NroCasoTieneDesembolsoResult', $this->response)) {
+            if ($this->response['NroCasoTieneDesembolsoResult'] === 'true') {
+                return true;
+            }
+        }
+
+        return false;
+    }
 
 } 

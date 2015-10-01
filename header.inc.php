@@ -1,6 +1,3 @@
-<script type="text/javascript">
-if (history.forward(1)){location.replace(history.forward(1))}
-</script>
 <?php
 
 header("Expires: Tue, 01 Jan 2000 06:00:00 GMT");
@@ -213,6 +210,9 @@ $(document).ready(function(e) {
   else if(browser[2] >= 10)
     sidebarMenu();*/
 });
+</script>
+<script type="text/javascript">
+if (history.forward(1)){location.replace(history.forward(1))}
 </script>
 <!--[if gte IE 9]>
   <style type="text/css">
