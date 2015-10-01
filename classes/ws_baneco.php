@@ -1,5 +1,7 @@
 <?php
-require_once ('nusoap/nusoap.php');
+
+require_once __DIR__ . '/../nusoap/nusoap.php';
+
 class WSBaneco {
     private
         $wsdl,
