@@ -534,7 +534,7 @@ if ($token === true){
                             
                             $sqlRs .= '("' . uniqid('@S#1$2014', true) . '", 
                             "' . $arr_cl[$k]['cl-d-idd'] . '", 
-                            "' . $link->real_escape_string('{"1":"1|0","2":"2|0"}') . '", 
+                            "' . $link->real_escape_string('{"3":"3|0","4":"4|0","5":"5|0","6":"6|0","7":"7|0","8":"8|0"}') . '", 
                             ""),';
                             
                             for ($i = 1; $i <= $beneficiary ; $i++) {
