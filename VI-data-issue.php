@@ -1163,6 +1163,13 @@ if ($sw === 2 && ($cr_payment === 'CO' || $cr_payment === 'DM')) {
 </form>
 <script type="text/javascript">
 $(document).ready(function(e) {
+    $('#bl-name, #bl-nit').keydown(function (e) {
+        console.log(e.keyCode);
+        if (e.keyCode === 13 || e.keyCode === 220) {
+            return false;
+        }
+    });
+    
     $('.check').iCheck({
         checkboxClass: 'icheckbox_flat-red',
         radioClass: 'iradio_flat-red'

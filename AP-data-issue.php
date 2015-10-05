@@ -1158,6 +1158,13 @@ if (($rsPl = $link->get_policy($_SESSION['idEF'], 'AP')) !== false) {
 </form>
 <script type="text/javascript">
 $(document).ready(function(e) {
+    $('#bl-name, #bl-nit').keydown(function (e) {
+        console.log(e.keyCode);
+        if (e.keyCode === 13 || e.keyCode === 220) {
+            return false;
+        }
+    });
+
     $('.check').iCheck({
         checkboxClass: 'icheckbox_flat-red',
         radioClass: 'iradio_flat-red'
