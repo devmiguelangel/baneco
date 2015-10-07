@@ -187,7 +187,7 @@ if ($token === true) {
 
                                             $queryset = trim($queryset, ',') . ';';
 
-                                            if ($link->query($queryset) === true) {
+                                            if ($link->query($queryset) === true && $link->affected_rows > 0) {
                                                 Emitir:
                                                 $arrBS[0] = 1;
                                                 $arrBS[1] = 'certificate-policy.php?ms=' . $_POST['ms'] 
