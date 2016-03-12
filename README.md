@@ -1,2 +1,2 @@
-# baneco
+# Banco Economico
 http://baneco.abrenet.com/
